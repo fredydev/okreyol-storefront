@@ -328,7 +328,7 @@ export default function Product() {
               </h2>
 
               <div className="divide-y divide-gray-200 border-t">
-                {JSON.parse(features.value).children.map((detail, idx) => (
+                {features&&JSON.parse(features.value).children.map((detail, idx) => (
                   <Disclosure as="div" key={idx}>
                     {({ open }) => (
                       <>

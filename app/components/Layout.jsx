@@ -26,7 +26,6 @@ import {useIsHomePath} from '~/lib/utils';
 import {useIsHydrated} from '~/hooks/useIsHydrated';
 import {useCartFetchers} from '~/hooks/useCartFetchers';
 import Annoucement from './Announcement';
-import { CUSTOMER_CREATE_MUTATION } from '~/routes/($locale).account.register';
 
 export function Layout({children, layout}) {
   return (
@@ -379,58 +378,7 @@ function Badge({openCart, dark, count}) {
 //     </Section>
 //   );
 // }
-const badRequest = (data) => json(data, {status: 400});
 
-export const action = async ({request, context, params}) => {
-  const {session, storefront} = context;
-  const formData = await request.formData();
-
-  const email = formData.get('email');
-  const password = formData.get('password');
-
-  if (
-    !email ||
-    typeof email !== 'string' 
-  ) {
-    return badRequest({
-      formError: 'Please provide  an email.',
-    });
-  }
-
-  try {
-    const data = await storefront.mutate(CUSTOMER_CREATE_MUTATION, {
-      variables: {
-        input: {email},
-      },
-    });
-
-    if (!data?.customerCreate?.customer?.id) {
-      /**
-       * Something is wrong with the user's input.
-       */
-      throw new Error(data?.customerCreate?.customerUserErrors.join(', '));
-    }
-
-    
-
-    return redirect(params.locale ? `${params.locale}/thanks` : '/thanks');
-  } catch (error) {
-    if (storefront.isApiError(error)) {
-      return badRequest({
-        formError: 'Something went wrong. Please try again later.',
-      });
-    }
-
-    /**
-     * The user did something wrong, but the raw error from the API is not super friendly.
-     * Let's make one up.
-     */
-    return badRequest({
-      formError:
-        'Sorry. We could not create an account with this email. User might already exist, try to login instead.',
-    });
-  }
-};
 
 const Footer = ({logo}) => {
   const [email, setEmail] = useState("");
@@ -527,8 +475,13 @@ const Footer = ({logo}) => {
               className="flex mb-4"
             >
                 <input
+                  id="email"
+                  name="email"
                   type="email"
-                  placeholder="Votre email"
+                  autoComplete="email"
+                  required
+                  placeholder="Email address"
+                  aria-label="Email address"
                   className={`border border-gray-300 rounded-l py-2 px-4 w-full text-black ${
                     isValidEmail ? "pr-12" : ""
                   }`}
