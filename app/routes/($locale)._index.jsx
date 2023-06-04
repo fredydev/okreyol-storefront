@@ -1,4 +1,4 @@
-import {defer} from '@shopify/remix-oxygen';
+import {defer, json} from '@shopify/remix-oxygen';
 import {Suspense} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
 import {AnalyticsPageType} from '@shopify/hydrogen';
@@ -72,6 +72,59 @@ export async function loader({params, context}) {
   );
 }
 
+const badRequest = (data) => json(data, {status: 400});
+
+export const action = async ({request, context, params}) => {
+  const {storefront} = context;
+  const formData = await request.formData();
+
+  const email = formData.get('email');
+  const password = '5hopify'
+
+  if (
+    !email ||
+    typeof email !== 'string' 
+  ) {
+    return badRequest({
+      formError: 'Please provide  an email.',
+    });
+  }
+
+  try {
+    const data = await storefront.mutate(CUSTOMER_CREATE_MUTATION, {
+      variables: {
+        input: {email,acceptsMarketing:true,password},
+      },
+    });
+
+    if (!data?.customerCreate?.customer?.id) {
+      /**
+       * Something is wrong with the user's input.
+       */
+      throw new Error(data?.customerCreate?.customerUserErrors.join(', '));
+    }
+
+    
+
+    return redirect(params.locale ? `${params.locale}/thanks` : '/thanks');
+  } catch (error) {
+    console.log(error);
+    if (storefront.isApiError(error)) {
+      return badRequest({
+        formError: 'Something went wrong. Please try again later.',
+      });
+    }
+
+    /**
+     * The user did something wrong, but the raw error from the API is not super friendly.
+     * Let's make one up.
+     */
+    return badRequest({
+      formError:
+        'Sorry. We could not create an account with this email. User might already exist, try to login instead.',
+    });
+  }
+};
 
 
 export default function Homepage() {
@@ -217,6 +270,21 @@ export const FEATURED_COLLECTIONS_QUERY = `#graphql
           height
           url
         }
+      }
+    }
+  }
+`;
+
+const CUSTOMER_CREATE_MUTATION = `#graphql
+  mutation customerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+      }
+      customerUserErrors {
+        code
+        field
+        message
       }
     }
   }

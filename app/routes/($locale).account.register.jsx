@@ -184,7 +184,7 @@ export default function Register() {
   );
 }
 
-export const CUSTOMER_CREATE_MUTATION = `#graphql
+const CUSTOMER_CREATE_MUTATION = `#graphql
   mutation customerCreate($input: CustomerCreateInput!) {
     customerCreate(input: $input) {
       customer {
