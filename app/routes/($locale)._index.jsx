@@ -1,4 +1,4 @@
-import {defer, json} from '@shopify/remix-oxygen';
+import {defer, json, redirect} from '@shopify/remix-oxygen';
 import {Suspense} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
 import {AnalyticsPageType} from '@shopify/hydrogen';
@@ -101,6 +101,7 @@ export const action = async ({request, context, params}) => {
       /**
        * Something is wrong with the user's input.
        */
+      console.log(data)
       throw new Error(data?.customerCreate?.customerUserErrors.join(', '));
     }
 
