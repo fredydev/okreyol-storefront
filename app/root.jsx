@@ -11,14 +11,17 @@ import {
   useRouteError,
 } from '@remix-run/react';
 import {ShopifySalesChannel, Seo} from '@shopify/hydrogen';
+import invariant from 'tiny-invariant';
+
 import {Layout} from '~/components';
+import {seoPayload} from '~/lib/seo.server';
+
+import favicon from '../public/favicon.svg';
+
 import {GenericError} from './components/GenericError';
 import {NotFound} from './components/NotFound';
 import styles from './styles/app.css';
-import favicon from '../public/favicon.svg';
-import {seoPayload} from '~/lib/seo.server';
 import {DEFAULT_LOCALE, parseMenu, getCartId} from './lib/utils';
-import invariant from 'tiny-invariant';
 import {useAnalytics} from './hooks/useAnalytics';
 
 export const links = () => {
@@ -74,7 +77,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className='font-poppins'>
         <Layout
           layout={data.layout}
           key={`${locale.language}-${locale.country}`}
@@ -141,6 +144,7 @@ const LAYOUT_QUERY = `#graphql
     $language: LanguageCode
     $headerMenuHandle: String!
     $footerMenuHandle: String!
+    $metaObjectType: String!
   ) @inContext(language: $language) {
     shop {
       id
@@ -156,6 +160,16 @@ const LAYOUT_QUERY = `#graphql
          }
        }
      }
+    }
+    announcement: metaobjects(type: $metaObjectType,first:1){
+      edges {
+        node {
+          id
+          fields {
+            value
+          }
+        }
+      }
     }
     headerMenu: menu(handle: $headerMenuHandle) {
       id
@@ -189,12 +203,14 @@ const LAYOUT_QUERY = `#graphql
 async function getLayoutData({storefront}) {
   const HEADER_MENU_HANDLE = 'main-menu';
   const FOOTER_MENU_HANDLE = 'footer';
+  const META_OBJECT_TYPE = "annoucement"
 
   const data = await storefront.query(LAYOUT_QUERY, {
     variables: {
       headerMenuHandle: HEADER_MENU_HANDLE,
       footerMenuHandle: FOOTER_MENU_HANDLE,
       language: storefront.i18n.language,
+      metaObjectType: META_OBJECT_TYPE
     },
   });
 
@@ -218,7 +234,10 @@ async function getLayoutData({storefront}) {
     ? parseMenu(data.footerMenu, customPrefixes)
     : undefined;
 
-  return {shop: data.shop, headerMenu, footerMenu};
+    const announcement = data?.announcement.edges.length > 0
+    ? data?.announcement.edges[0].node.fields[0].value
+    : undefined;
+  return {shop: data.shop, headerMenu, footerMenu, announcement};
 }
 
 const CART_QUERY = `#graphql

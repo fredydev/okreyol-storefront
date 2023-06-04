@@ -1,10 +1,11 @@
 import {useFetcher, useLocation, useMatches} from '@remix-run/react';
-import {Heading, Button, IconCheck} from '~/components';
 import {useCallback, useEffect, useRef} from 'react';
 import {useInView} from 'react-intersection-observer';
+import clsx from 'clsx';
+
+import {Heading, Button, IconCheck} from '~/components';
 import {CartAction} from '~/lib/type';
 import {DEFAULT_LOCALE} from '~/lib/utils';
-import clsx from 'clsx';
 
 export function CountrySelector() {
   const [root] = useMatches();

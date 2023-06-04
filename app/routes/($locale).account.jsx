@@ -7,6 +7,9 @@ import {
   useOutlet,
 } from '@remix-run/react';
 import {Suspense} from 'react';
+import {json, defer, redirect} from '@shopify/remix-oxygen';
+import {flattenConnection} from '@shopify/hydrogen';
+
 import {
   Button,
   OrderCard,
@@ -18,12 +21,11 @@ import {
   ProductSwimlane,
 } from '~/components';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
-import {json, defer, redirect} from '@shopify/remix-oxygen';
-import {flattenConnection} from '@shopify/hydrogen';
-import {getFeaturedData} from './($locale).featured-products';
-import {doLogout} from './($locale).account.logout';
 import {usePrefixPathWithLocale} from '~/lib/utils';
 import {CACHE_NONE, routeHeaders} from '~/data/cache';
+
+import {getFeaturedData} from './($locale).featured-products';
+import {doLogout} from './($locale).account.logout';
 
 export const headers = routeHeaders;
 

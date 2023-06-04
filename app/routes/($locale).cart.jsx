@@ -1,8 +1,9 @@
-import {CartLoading, Cart} from '~/components';
 import {Await, useMatches} from '@remix-run/react';
 import {Suspense} from 'react';
 import invariant from 'tiny-invariant';
 import {json} from '@shopify/remix-oxygen';
+
+import {CartLoading, Cart} from '~/components';
 import {isLocalPath, getCartId} from '~/lib/utils';
 import {CartAction} from '~/lib/type';
 

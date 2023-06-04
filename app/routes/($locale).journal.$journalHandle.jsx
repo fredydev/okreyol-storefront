@@ -2,10 +2,12 @@ import {json} from '@shopify/remix-oxygen';
 import {useLoaderData} from '@remix-run/react';
 import {Image} from '@shopify/hydrogen';
 import invariant from 'tiny-invariant';
+
 import {PageHeader, Section} from '~/components';
 import {seoPayload} from '~/lib/seo.server';
-import styles from '../styles/custom-font.css';
 import {routeHeaders, CACHE_LONG} from '~/data/cache';
+
+import styles from '../styles/custom-font.css';
 
 const BLOG_HANDLE = 'journal';
 

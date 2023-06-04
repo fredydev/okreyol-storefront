@@ -50,6 +50,7 @@ export function Text({
 export function Heading({
   as: Component = 'h2',
   children,
+  center,
   className = '',
   format,
   size = 'heading',
@@ -63,21 +64,16 @@ export function Heading({
     copy: 'font-medium text-copy',
   };
 
-  const widths = {
-    default: 'max-w-prose',
-    narrow: 'max-w-prose-narrow',
-    wide: 'max-w-prose-wide',
-  };
-
+  
   const styles = clsx(
     missingClass(className, 'whitespace-') && 'whitespace-pre-wrap',
-    missingClass(className, 'max-w-') && widths[width],
+    // missingClass(className, 'max-w-') && widths[width],
     missingClass(className, 'font-') && sizes[size],
     className,
   );
 
   return (
-    <Component {...props} className={styles}>
+    <Component {...props} className={styles+`${center?' text-center':''}`}>
       {format ? formatText(children) : children}
     </Component>
   );
@@ -87,9 +83,11 @@ export function Section({
   as: Component = 'section',
   children,
   className,
+  center,
   divider = 'none',
-  display = 'grid',
+  display = center?'flex':'grid',
   heading,
+  bg,
   padding = 'all',
   ...props
 }) {
@@ -116,18 +114,21 @@ export function Section({
     'w-full gap-4 md:gap-8',
     displays[display],
     missingClass(className, '\\mp[xy]?-') && paddings[padding],
-    dividers[divider],
+    // dividers[divider],
     className,
   );
 
   return (
-    <Component {...props} className={styles}>
-      {heading && (
-        <Heading size="lead" className={padding === 'y' ? paddings['x'] : ''}>
-          {heading}
-        </Heading>
-      )}
-      {children}
+    <Component  className={`${bg?bg:''} donfred flex-col `}>
+      <div {...props} className={styles+'  flex-col donfred container mx-auto '}>
+        {heading && (
+          <Heading center={center}  className={padding === 'y' ? paddings['x'] : ''}>
+            {heading}
+          </Heading>
+        )}
+        
+        {children}
+      </div>
     </Component>
   );
 }
@@ -150,13 +151,15 @@ export function PageHeader({
   const styles = clsx(variants[variant], className);
 
   return (
-    <header {...props} className={styles}>
-      {heading && (
-        <Heading as="h1" width="narrow" size="heading" className="inline-block">
-          {heading}
-        </Heading>
-      )}
-      {children}
+    <header >
+      <div {...props} className={styles+' flex-col donfred container mx-auto '}>
+        {heading && (
+          <Heading as="h1" width="narrow" size="heading" className="inline-block">
+            {heading}
+          </Heading>
+        )}
+        {children}
+      </div>
     </header>
   );
 }

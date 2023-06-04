@@ -1,13 +1,13 @@
-import {Button, Grid, ProductCard, Link} from '~/components';
-import {getImageLoadingPriority} from '~/lib/const';
 import {useFetcher} from '@remix-run/react';
 import {useEffect, useState} from 'react';
+
+import {getImageLoadingPriority} from '~/lib/const';
+import {Button, Grid, ProductCard, Link} from '~/components';
 
 export function ProductGrid({url, collection, ...props}) {
   const [initialProducts, setInitialProducts] = useState(
     collection?.products?.nodes || [],
   );
-
   const [nextPage, setNextPage] = useState(
     collection?.products?.pageInfo?.hasNextPage,
   );
@@ -26,17 +26,23 @@ export function ProductGrid({url, collection, ...props}) {
   const fetcher = useFetcher();
 
   function fetchMoreProducts() {
-    fetcher.load(`${url}?index&cursor=${endCursor}`);
+    if (!endCursor) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('cursor', endCursor);
+    fetcher.load(url.pathname + url.search);
   }
 
   useEffect(() => {
     if (!fetcher.data) return;
 
-    const {collection} = fetcher.data;
+    const {products, collection} = fetcher.data;
+    const pageProducts = collection?.products || products;
 
-    setProducts((prev) => [...prev, ...collection.products.nodes]);
-    setNextPage(collection.products.pageInfo.hasNextPage);
-    setEndCursor(collection.products.pageInfo.endCursor);
+    if (!pageProducts) return;
+
+    setProducts((prev) => [...prev, ...pageProducts.nodes]);
+    setNextPage(products.pageInfo.hasNextPage);
+    setEndCursor(products.pageInfo.endCursor);
   }, [fetcher.data]);
 
   const haveProducts = initialProducts.length > 0;

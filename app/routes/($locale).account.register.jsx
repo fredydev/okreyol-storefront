@@ -1,9 +1,11 @@
 import {redirect, json} from '@shopify/remix-oxygen';
 import {Form, useActionData} from '@remix-run/react';
 import {useState} from 'react';
+
 import {getInputStyleClasses} from '~/lib/utils';
-import {doLogin} from './($locale).account.login';
 import {Link} from '~/components';
+
+import {doLogin} from './($locale).account.login';
 
 export async function loader({context, params}) {
   const customerAccessToken = await context.session.get('customerAccessToken');
@@ -182,7 +184,7 @@ export default function Register() {
   );
 }
 
-const CUSTOMER_CREATE_MUTATION = `#graphql
+export const CUSTOMER_CREATE_MUTATION = `#graphql
   mutation customerCreate($input: CustomerCreateInput!) {
     customerCreate(input: $input) {
       customer {

@@ -11,8 +11,9 @@ export default {
         contrast: 'rgb(var(--color-contrast) / <alpha-value>)',
         notice: 'rgb(var(--color-accent) / <alpha-value>)',
         shopPay: 'rgb(var(--color-shop-pay) / <alpha-value>)',
-        "okgreen": '#3d5a23',
-        "okwhite": '#f9f9f9'
+        "cboismarron":"#543817",
+        "corange":"#edb178ff",
+        "clightgray": '#eaeaea'
       },
       screens: {
         sm: '32em',
@@ -41,6 +42,7 @@ export default {
         mobileGallery: 'calc(100vw - 3rem)',
       },
       fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
         sans: ['Helvetica Neue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         serif: ['"IBMPlexSerif"', 'Palatino', 'ui-serif'],
       },

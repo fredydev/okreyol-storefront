@@ -16,20 +16,26 @@ export function Hero({
   spreadSecondary,
   top,
 }) {
+  const navClass = 'h-nav';
+  const heroStyle = {
+    height: `calc(100vh - 6rem`,
+  };
   return (
     <Link to={`/collections/${handle}`}>
       <section
         className={clsx(
-          'relative justify-end flex flex-col w-full',
-          top && '-mt-nav',
-          height === 'full'
-            ? 'h-screen'
-            : 'aspect-[4/5] sm:aspect-square md:aspect-[5/4] lg:aspect-[3/2] xl:aspect-[2/1]',
+          'relative justify-end flex flex-col w-full donfred',
+          
+          // top && '-mt-nav',
+          // height === 'full' 
+          //   ? 'h-screen'
+          //   : 'aspect-[4/5] sm:aspect-square md:aspect-[5/4] lg:aspect-[3/2] xl:aspect-[2/1]',
         )}
+        style={heroStyle}
       >
-        <div className="absolute inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-10 content-stretch overflow-clip">
+        <div className="absolute    inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-10 content-stretch overflow-clip">
           {spread?.reference && (
-            <div>
+            <div >
               <SpreadMedia
                 sizes={
                   spreadSecondary?.reference
@@ -51,18 +57,20 @@ export function Hero({
             </div>
           )}
         </div>
-        <div className="flex flex-col items-baseline justify-between gap-4 px-6 py-8 sm:px-8 md:px-12 bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/60 text-contrast">
-          {heading?.value && (
-            <Heading format as="h2" size="display" className="max-w-md">
-              {heading.value}
-            </Heading>
-          )}
-          {byline?.value && (
-            <Text format width="narrow" as="p" size="lead">
-              {byline.value}
-            </Text>
-          )}
-          {cta?.value && <Text size="lead">{cta.value}</Text>}
+        <div className="  bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/60 text-contrast ">
+          <div className='donfred  container mx-auto px-6 md:px-8 lg:px-12  flex flex-col items-baseline justify-between gap-4  py-8  '>
+            {heading?.value && (
+              <Heading format as="h2" size="display" className="max-w-md">
+                {heading.value}
+              </Heading>
+            )}
+            {byline?.value && (
+              <Text format width="narrow" as="p" size="lead">
+                {byline.value}
+              </Text>
+            )}
+          { cta?.value && <Text size="lead">{cta.value}</Text>}
+          </div>
         </div>
       </section>
     </Link>

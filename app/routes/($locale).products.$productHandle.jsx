@@ -1,5 +1,9 @@
 import {useRef, Suspense, useMemo, useState} from 'react';
-import {Disclosure, Listbox} from '@headlessui/react';
+import {Disclosure, Listbox, RadioGroup, Tab} from '@headlessui/react';
+import BreadCrumb from "../components/BreadCrumb"
+import { StarIcon } from '@heroicons/react/20/solid'
+import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import {defer} from '@shopify/remix-oxygen';
 import {
   useLoaderData,
@@ -8,8 +12,10 @@ import {
   useLocation,
   useNavigation,
 } from '@remix-run/react';
-
 import {AnalyticsPageType, Money, ShopPayButton} from '@shopify/hydrogen';
+import invariant from 'tiny-invariant';
+import clsx from 'clsx';
+
 import {
   Heading,
   IconCaret,
@@ -26,8 +32,6 @@ import {
 } from '~/components';
 import {getExcerpt} from '~/lib/utils';
 import {seoPayload} from '~/lib/seo.server';
-import invariant from 'tiny-invariant';
-import clsx from 'clsx';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {routeHeaders, CACHE_SHORT} from '~/data/cache';
 
@@ -98,58 +102,29 @@ export async function loader({params, request, context}) {
   );
 }
 
-export default function Product() {
+export  function Producto() {
   const {product, shop, recommended} = useLoaderData();
   const {media, title, vendor, descriptionHtml} = product;
   const {shippingPolicy, refundPolicy} = shop;
-  const [quantity, setQuantity] = useState(1);
-
-  const handleQuantityChange = (e) => {
-    const newQuantity = parseInt(e.target.value);
-    if (!isNaN(newQuantity)) {
-      setQuantity(newQuantity);
-    }
-  };
-
-  const handleIncrement = () => {
-    setQuantity(quantity + 1);
-  };
-
-  const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
 
   return (
     <>
-      <Section className="px-0 md:px-8 lg:px-12 ">
-        <div className="flex mx-auto  max-w-5xl">
+      <Section className="px-0 md:px-8 lg:px-12">
+        <div className="grid items-start md:gap-6 lg:gap-20 md:grid-cols-2 lg:grid-cols-3">
           <ProductGallery
             media={media.nodes}
-            className="w-1/2 lg:col-span-2"
+            className="w-full lg:col-span-2"
           />
-          <div className="w-1/2 sticky md:-mb-nav md:top-nav md:-translate-y-nav md:h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
-            
-            <section className="flex flex-col w-full max-w-xl gap-8 p-6 md:mx-auto md:max-w-sm md:px-0 border-6 border-green-800">
-             
+          <div className="sticky md:-mb-nav md:top-nav md:-translate-y-nav md:h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
+            <section className="flex flex-col w-full max-w-xl gap-8 p-6 md:mx-auto md:max-w-sm md:px-0">
               <div className="grid gap-2">
                 <Heading as="h1" className="whitespace-normal">
-                  {title} 
+                  {title}
                 </Heading>
                 {vendor && (
                   <Text className={'opacity-50 font-medium'}>{vendor}</Text>
                 )}
               </div>
-              <label className='m-0'>Quantité</label>
-              <input
-                type="number"
-                min="1"
-                value={quantity}
-                onChange={handleQuantityChange}
-                className="w-16 px-2 py-1 border border-gray-300 rounded mx-2 text-center"
-              />
               <ProductForm />
               <div className="grid gap-4 py-4">
                 {descriptionHtml && (
@@ -189,6 +164,237 @@ export default function Product() {
       </Suspense>
     </>
   );
+}
+
+const productol = {
+  name: 'Zip Tote Basket',
+  price: '$140',
+  rating: 4,
+  images: [
+    {
+      id: 1,
+      name: 'Angled view',
+      src: 'https://tailwindui.com/img/ecommerce-images/product-page-03-product-01.jpg',
+      alt: 'Angled front view with bag zipped and handles upright.',
+    },
+    // More images...
+  ],
+  colors: [
+    { name: 'Washed Black', bgColor: 'bg-gray-700', selectedColor: 'ring-gray-700' },
+    { name: 'White', bgColor: 'bg-white', selectedColor: 'ring-gray-400' },
+    { name: 'Washed Gray', bgColor: 'bg-gray-500', selectedColor: 'ring-gray-500' },
+  ],
+  description: `
+    <p>The Zip Tote Basket is the perfect midpoint between shopping tote and comfy backpack. With convertible straps, you can hand carry, should sling, or backpack this convenient and spacious bag. The zip top and durable canvas construction keeps your goods protected for all-day use.</p>
+  `,
+  details: [
+    {
+      name: 'Features',
+      items: [
+        'Multiple strap configurations',
+        'Spacious interior with top zip',
+        'Leather handle and tabs',
+        'Interior dividers',
+        'Stainless strap loops',
+        'Double stitched construction',
+        'Water-resistant',
+      ],
+    },
+    // More sections...
+  ],
+}
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+export default function Product() {
+  const {product,shop} = useLoaderData();
+  const {media, title, vendor, descriptionHtml, features} = product;
+  const {shippingPolicy, refundPolicy} = shop;
+  const urls = media.nodes.reduce((acc, curr) => {
+    if (curr.previewImage && curr.previewImage.url) {
+      acc.push(curr.previewImage.url);
+    }
+    return acc;
+  }, []);
+  console.log(shippingPolicy)
+  // const [selectedColor, setSelectedColor] = useState(product.colors[0])
+
+  return (
+    <div className="bg-white border-4 border-red-500">
+      <div className="mx-auto container px-6 md:px-8 lg:px-12 py-8 s ">
+        <BreadCrumb />
+        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+          {/* Image gallery */}
+          <Tab.Group as="div" className="flex flex-col-reverse">
+            {/* Image selector */}
+            <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
+              <Tab.List className="grid grid-cols-4 gap-6">
+                {urls.map((image) => (
+                  <Tab
+                    key={image}
+                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+                  >
+                    {({ selected }) => (
+                      <>
+                        <span className="sr-only">{image}</span>
+                        <span className="absolute inset-0 overflow-hidden rounded-md">
+                          <img src={image} alt="" className="h-full w-full object-cover object-center" />
+                        </span>
+                        <span
+                          className={classNames(
+                            selected ? 'ring-corange' : 'ring-transparent',
+                            'pointer-events-none absolute inset-0 rounded-md rin ring-o'
+                          )}
+                          aria-hidden="true"
+                        />
+                      </>
+                    )}
+                  </Tab>
+                ))}
+              </Tab.List>
+            </div>
+
+            <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
+              {urls.map((image) => (
+                <Tab.Panel key={image}>
+                  <img
+                    src={image}
+                    alt={image}
+                    className="h-full w-full object-cover object-center sm:rounded-lg"
+                  />
+                </Tab.Panel>
+              ))}
+            </Tab.Panels>
+          </Tab.Group>
+                {/* {documentToReactComponents(JSON.parse(features.value))} */}
+          {/* Product info */}
+          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
+            {vendor && (
+                  <Text className={'opacity-50 font-medium'}>{vendor}</Text>
+                )}
+            <div className="mt-3">
+              <h2 className="sr-only">Product information</h2>
+              <p className="text-3xl tracking-tight text-gray-900">{productol.price}</p>
+            </div>
+
+            {/* Reviews */}
+            <div className="mt-3">
+              <h3 className="sr-only">Reviews</h3>
+              <div className="flex items-center">
+                <div className="flex items-center">
+                  {[0, 1, 2, 3, 4].map((rating) => (
+                    <StarIcon
+                      key={rating}
+                      className={classNames(
+                        productol.rating > rating ? 'text-okgreen' : 'text-gray-300',
+                        'h-5 w-5 flex-shrink-0'
+                      )}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                <p className="sr-only">{productol.rating} out of 5 stars</p>
+              </div>
+            </div>
+                        
+           
+
+            <form className="mt-6">
+              {/* Colors */}
+              
+
+              <div className="sm:flex-col1 mt-10 flex">
+                <button
+                  type="submit"
+                  className="flex max-w-xs flex-1 items-center justify-center rounded-full border border-transparent bg-corange px-8 py-3 text-base font-medium text-white hover:bg-okgreen-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+                >
+                  Add to bag
+                </button>
+
+                <button
+                  type="button"
+                  className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
+                >
+                  <HeartIcon className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+                  <span className="sr-only">Add to favorites</span>
+                </button>
+              </div>
+            </form>
+                        
+            <section aria-labelledby="details-heading" className="mt-12">
+              <h2 id="details-heading" className="sr-only">
+                Additional details
+              </h2>
+
+              <div className="divide-y divide-gray-200 border-t">
+                {JSON.parse(features.value).children.map((detail, idx) => (
+                  <Disclosure as="div" key={idx}>
+                    {({ open }) => (
+                      <>
+                        <h3>
+                          <Disclosure.Button className="group relative flex w-full items-center justify-between py-6 text-left">
+                            <span
+                              className={classNames(open ? 'text-corange' : 'text-gray-900', 'text-sm font-medium')}
+                            >
+                              {"Caractéristiques"}
+                            </span>
+                            <span className="ml-6 flex items-center">
+                              {open ? (
+                                <MinusIcon
+                                  className="block h-6 w-6 text-corange"
+                                  aria-hidden="true"
+                                />
+                              ) : (
+                                <PlusIcon
+                                  className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            </span>
+                          </Disclosure.Button>
+                        </h3>
+                        <Disclosure.Panel as="div" className="prose prose-sm pb-6 transition-max-height duration-500 ease-in-out">
+                          <ul >
+                            {detail.children.map((item) => (
+                              <li key={item.children[0].value}>{item.children[0].value}</li>
+                            ))}
+                          </ul>
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                ))}
+              </div>
+              {shippingPolicy?.body && (
+                  <ProductDetail
+                    title="Expédition"
+                    content={getExcerpt(shippingPolicy.body)}
+                    learnMore={`/policies/${shippingPolicy.handle}`}
+                  />
+                )}
+                {refundPolicy?.body && (
+                  <ProductDetail
+                    title="Retour"
+                    content={getExcerpt(refundPolicy.body)}
+                    learnMore={`/policies/${refundPolicy.handle}`}
+                  />
+                )}
+            </section>
+          </div>
+           
+        </div>
+        <div className="mt-6">
+              <h3 className="sr-onl">Description</h3>
+
+              <div
+                className="space-y-6 text-base text-gray-700"
+                dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+              />
+            </div>
+      </div>
+    </div>
+  )
 }
 
 export function ProductForm() {
@@ -267,7 +473,6 @@ export function ProductForm() {
                     quantity: 1,
                   },
                 ]}
-                className='bg-okgreen text-okwhite px-10 py-3  rounded-full'
                 variant="primary"
                 data-test="add-to-cart"
                 analytics={{
@@ -286,7 +491,7 @@ export function ProductForm() {
                     as="span"
                   />
                   {isOnSale && (
-                    <Money 
+                    <Money
                       withoutTrailingZeros
                       data={selectedVariant?.compareAtPrice}
                       as="span"
@@ -301,7 +506,6 @@ export function ProductForm() {
                 width="100%"
                 variantIds={[selectedVariant?.id]}
                 storeDomain={storeDomain}
-                className='rounded-full !important'
               />
             )}
           </div>
@@ -459,9 +663,9 @@ function ProductDetail({title, content, learnMore}) {
     <Disclosure key={title} as="div" className="grid w-full gap-2">
       {({open}) => (
         <>
-          <Disclosure.Button className="text-left">
+          {/* <Disclosure.Button className="text-left">
             <div className="flex justify-between">
-              <Text size="lead" as="h4">
+              <Text size="lead" className={"text-sm font-medium"} as="h4">
                 {title}
               </Text>
               <IconClose
@@ -471,8 +675,27 @@ function ProductDetail({title, content, learnMore}) {
                 )}
               />
             </div>
-          </Disclosure.Button>
-
+          </Disclosure.Button> */}
+          <Disclosure.Button className="group relative flex w-full items-center justify-between py-6 text-left">
+                            <span
+                              className={classNames(open ? 'text-corange' : 'text-gray-900', 'text-sm font-medium')}
+                            >
+                              {title}
+                            </span>
+                            <span className="ml-6 flex items-center">
+                              {open ? (
+                                <MinusIcon
+                                  className="block h-6 w-6 text-corange"
+                                  aria-hidden="true"
+                                />
+                              ) : (
+                                <PlusIcon
+                                  className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            </span>
+                          </Disclosure.Button>
           <Disclosure.Panel className={'pb-4 pt-2 grid gap-2'}>
             <div
               className="prose dark:prose-invert"
@@ -548,6 +771,9 @@ const PRODUCT_QUERY = `#graphql
       options {
         name
         values
+      }
+      features: metafield(namespace:"details",key:"features") {
+        value
       }
       selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
         ...ProductVariantFragment

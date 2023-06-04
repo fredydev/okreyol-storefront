@@ -1,6 +1,7 @@
 import {json} from '@shopify/remix-oxygen';
 import {useLoaderData} from '@remix-run/react';
 import invariant from 'tiny-invariant';
+
 import {PageHeader, Section, Heading, Link} from '~/components';
 import {routeHeaders, CACHE_LONG} from '~/data/cache';
 import {seoPayload} from '~/lib/seo.server';
@@ -54,25 +55,25 @@ export default function Policies() {
 }
 
 const POLICIES_QUERY = `#graphql
-  fragment Policy on ShopPolicy {
+  fragment PolicyIndex on ShopPolicy {
     id
     title
     handle
   }
 
-  query PoliciesQuery {
+  query PoliciesIndex {
     shop {
       privacyPolicy {
-        ...Policy
+        ...PolicyIndex
       }
       shippingPolicy {
-        ...Policy
+        ...PolicyIndex
       }
       termsOfService {
-        ...Policy
+        ...PolicyIndex
       }
       refundPolicy {
-        ...Policy
+        ...PolicyIndex
       }
       subscriptionPolicy {
         id

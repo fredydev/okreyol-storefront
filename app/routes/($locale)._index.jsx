@@ -1,12 +1,13 @@
 import {defer} from '@shopify/remix-oxygen';
 import {Suspense} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
-import {ProductSwimlane, FeaturedCollections, Hero, MyHero} from '~/components';
-import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
-import {getHeroPlaceholder} from '~/lib/placeholders';
-import {seoPayload} from '~/lib/seo.server';
 import {AnalyticsPageType} from '@shopify/hydrogen';
+
+import { FeaturedCollections, Hero} from '~/components';
+import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
+import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders, CACHE_SHORT} from '~/data/cache';
+import { Perks } from '~/components/Perks';
 
 export const headers = routeHeaders;
 
@@ -21,9 +22,8 @@ export async function loader({params, context}) {
     // the the locale param must be invalid, send to the 404 page
     throw new Response(null, {status: 404});
   }
-
-  const {shop, hero} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
-    variables: {handle: 'freestyle'},
+  const {shop, hero,perks} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
+    variables: {handle: 'meilleures-ventes'},
   });
 
   const seo = seoPayload.home();
@@ -32,6 +32,8 @@ export async function loader({params, context}) {
     {
       shop,
       primaryHero: hero,
+      perks,
+      // perks,
       // These different queries are separated to illustrate how 3rd party content
       // fetching can be optimized for both above and below the fold.
       featuredProducts: context.storefront.query(
@@ -48,13 +50,6 @@ export async function loader({params, context}) {
           },
         },
       ),
-      secondaryHero: context.storefront.query(COLLECTION_HERO_QUERY, {
-        variables: {
-          handle: 'backcountry',
-          country,
-          language,
-        },
-      }),
       featuredCollections: context.storefront.query(
         FEATURED_COLLECTIONS_QUERY,
         {
@@ -64,13 +59,6 @@ export async function loader({params, context}) {
           },
         },
       ),
-      tertiaryHero: context.storefront.query(COLLECTION_HERO_QUERY, {
-        variables: {
-          handle: 'winter-2022',
-          country,
-          language,
-        },
-      }),
       analytics: {
         pageType: AnalyticsPageType.home,
       },
@@ -84,50 +72,21 @@ export async function loader({params, context}) {
   );
 }
 
+
+
 export default function Homepage() {
   const {
     primaryHero,
-    secondaryHero,
-    tertiaryHero,
+    perks,
     featuredCollections,
-    featuredProducts,
   } = useLoaderData();
-
+// console.log(perks);
   // TODO: skeletons vs placeholders
-  const skeletons = getHeroPlaceholder([{}, {}, {}]);
 
   return (
     <>
       {primaryHero && (
         <Hero {...primaryHero} height="full" top loading="eager" />
-      )}
-      <MyHero />
-      {featuredProducts && (
-        <Suspense>
-          <Await resolve={featuredProducts}>
-            {({products}) => {
-              if (!products?.nodes) return <></>;
-              return (
-                <ProductSwimlane
-                  products={products.nodes}
-                  title="Featured Products"
-                  count={4}
-                />
-              );
-            }}
-          </Await>
-        </Suspense>
-      )}
-
-      {secondaryHero && (
-        <Suspense fallback={<Hero {...skeletons[1]} />}>
-          <Await resolve={secondaryHero}>
-            {({hero}) => {
-              if (!hero) return <></>;
-              return <Hero {...hero} />;
-            }}
-          </Await>
-        </Suspense>
       )}
 
       {featuredCollections && (
@@ -145,18 +104,22 @@ export default function Homepage() {
           </Await>
         </Suspense>
       )}
-
-      {tertiaryHero && (
-        <Suspense fallback={<Hero {...skeletons[2]} />}>
-          <Await resolve={tertiaryHero}>
-            {({hero}) => {
-              if (!hero) return <></>;
-              return <Hero {...hero} />;
+      {/* {perks && (
+        <Suspense>
+          <Await resolve={perks}>
+            {({perks}) => {
+              if (!perks?.edges) return <></>
+              return ( */}
+                <Perks
+                  perks={perks.edges}
+                  title="Nos collections du moment"
+                />
+              {/* )
             }}
           </Await>
         </Suspense>
-      )}
-    </>
+      )} */}
+</>
   );
 }
 
@@ -190,8 +153,8 @@ const COLLECTION_CONTENT_FRAGMENT = `#graphql
 `;
 
 const HOMEPAGE_SEO_QUERY = `#graphql
-  query collectionContent($handle: String, $country: CountryCode, $language: LanguageCode)
-  @inContext(country: $country, language: $language) {
+  query seoCollectionContent($handle: String, $country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language,) {
     hero: collection(handle: $handle) {
       ...CollectionContent
     }
@@ -199,12 +162,22 @@ const HOMEPAGE_SEO_QUERY = `#graphql
       name
       description
     }
+    perks: metaobjects(type: "perks",first:3){
+      edges {
+        node {
+          id
+          fields {
+            value
+          }
+        }
+      }
+    }
   }
   ${COLLECTION_CONTENT_FRAGMENT}
 `;
 
 const COLLECTION_HERO_QUERY = `#graphql
-  query collectionContent($handle: String, $country: CountryCode, $language: LanguageCode)
+  query heroCollectionContent($handle: String, $country: CountryCode, $language: LanguageCode)
   @inContext(country: $country, language: $language) {
     hero: collection(handle: $handle) {
       ...CollectionContent

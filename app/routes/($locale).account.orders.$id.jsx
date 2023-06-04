@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import {json, redirect} from '@shopify/remix-oxygen';
 import {useLoaderData} from '@remix-run/react';
 import {Money, Image, flattenConnection} from '@shopify/hydrogen';
+
 import {statusMessage} from '~/lib/utils';
 import {Link, Heading, PageHeader, Text} from '~/components';
 

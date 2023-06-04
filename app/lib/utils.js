@@ -1,8 +1,7 @@
 import {useLocation, useMatches} from '@remix-run/react';
 import {parse as parseCookie} from 'worktop/cookie';
-
-// @ts-expect-error types not available
 import typographicBase from 'typographic-base';
+
 import {countries} from '~/data/countries';
 
 export function missingClass(string, prefix) {

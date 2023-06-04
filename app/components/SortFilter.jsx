@@ -1,7 +1,5 @@
 import {useMemo, useState} from 'react';
 import {Menu} from '@headlessui/react';
-
-import {Heading, IconFilters, IconCaret, IconXMark, Text} from '~/components';
 import {
   Link,
   useLocation,
@@ -10,6 +8,8 @@ import {
 } from '@remix-run/react';
 import {useDebounce} from 'react-use';
 import {Disclosure} from '@headlessui/react';
+
+import {Heading, IconFilters, IconCaret, IconXMark, Text} from '~/components';
 
 export function SortFilter({
   filters,

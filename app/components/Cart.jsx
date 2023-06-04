@@ -2,6 +2,8 @@ import clsx from 'clsx';
 import {useRef} from 'react';
 import {useScroll} from 'react-use';
 import {flattenConnection, Image, Money} from '@shopify/hydrogen';
+import {useFetcher} from '@remix-run/react';
+
 import {
   Button,
   Heading,
@@ -11,7 +13,6 @@ import {
   FeaturedProducts,
 } from '~/components';
 import {getInputStyleClasses} from '~/lib/utils';
-import {useFetcher} from '@remix-run/react';
 import {CartAction} from '~/lib/type';
 
 export function Cart({layout, onClose, cart}) {
@@ -144,7 +145,7 @@ function CartCheckoutActions({checkoutUrl}) {
   return (
     <div className="flex flex-col mt-2">
       <a href={checkoutUrl} target="_self">
-        <Button as="span" width="full" className='bg-okgreen text-white px-10 py-3  rounded-full w-full'>
+        <Button as="span" width="full">
           Continue to Checkout
         </Button>
       </a>

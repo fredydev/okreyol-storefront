@@ -47,7 +47,22 @@ function home() {
     },
   };
 }
-
+function thanks() {
+  return {
+    title: 'Thanks',
+    titleTemplate: '%s | Hydrogen Demo Store',
+    description: 'Thanks for subscribing to',
+    robots: {
+      noIndex: false,
+      noFollow: false,
+    },
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Thanks page',
+    },
+  };
+}
 function productJsonLd({product, selectedVariant, url}) {
   const origin = new URL(url).origin;
   const variants = product.variants.nodes;
@@ -324,6 +339,7 @@ export const seoPayload = {
   policy,
   product,
   root,
+  thanks
 };
 
 /**
