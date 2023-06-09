@@ -13,7 +13,8 @@ export default {
         shopPay: 'rgb(var(--color-shop-pay) / <alpha-value>)',
         "cboismarron":"#543817",
         "corange":"#edb178ff",
-        "clightgray": '#eaeaea'
+        "clightgray": '#eaeaea',
+        "creme":"#f7f3ed"
       },
       screens: {
         sm: '32em',
@@ -43,6 +44,7 @@ export default {
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
+        assistant: ['Assistant', 'sans-serif'],
         sans: ['Helvetica Neue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         serif: ['"IBMPlexSerif"', 'Palatino', 'ui-serif'],
       },

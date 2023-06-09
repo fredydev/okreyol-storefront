@@ -8,6 +8,8 @@ import {routeHeaders, CACHE_SHORT} from '~/data/cache';
 export const headers = routeHeaders;
 
 export async function loader({params, context}) {
+  const newsubscriber = await context.session.get('newsubscriber');
+
   // const {language, country} = context.storefront.i18n;
 
   // if (
@@ -27,6 +29,7 @@ export async function loader({params, context}) {
   return defer(
     {
       shop: "FREDY",
+      newsubscriber
       
       // analytics: {
       //   pageType: AnalyticsPageType.home,
@@ -44,14 +47,14 @@ export async function loader({params, context}) {
 
 export default function Thanks() {
   const {
-    shop
+    newsubscriber
   } = useLoaderData();
   // TODO: skeletons vs placeholders
 
   return (
     <>
       <div>
-        {shop}
+        Hello {newsubscriber}
       </div>
      
 </>

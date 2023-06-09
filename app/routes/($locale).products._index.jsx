@@ -6,7 +6,7 @@ import {
   getPaginationVariables__unstable as getPaginationVariables,
 } from '@shopify/hydrogen';
 
-import {PageHeader, Section, ProductCard, Grid} from '~/components';
+import {PageHeader, Section, ProductCard, Grid, Button} from '~/components';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getImageLoadingPriority} from '~/lib/const';
 import {seoPayload} from '~/lib/seo.server';
@@ -67,8 +67,8 @@ export default function AllProducts() {
 
   return (
     <>
-      <PageHeader heading="All Products" variant="allCollections" />
-      <Section>
+      <PageHeader heading="Tous nos articles en bois"  />
+      <Section padding='x'>
         <Pagination connection={products}>
           {({nodes, isLoading, NextLink, PreviousLink}) => {
             const itemsMarkup = nodes.map((product, i) => (
@@ -81,15 +81,21 @@ export default function AllProducts() {
 
             return (
               <>
-                <div className="flex items-center justify-center mt-6">
-                  <PreviousLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                    {isLoading ? 'Loading...' : 'Previous'}
+                <div className="flex items-center justify-center my-6">
+                  <PreviousLink className="inline-block  font-medium text-center  border-primary/10 bg-contrast text-primary w-fit">
+                    <Button>
+                      {isLoading ? 'Loading...' : 'Précédent'}
+                    </Button>
+                    
                   </PreviousLink>
                 </div>
                 <Grid data-test="product-grid">{itemsMarkup}</Grid>
-                <div className="flex items-center justify-center mt-6">
-                  <NextLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                    {isLoading ? 'Loading...' : 'Next'}
+                <div className="flex items-center justify-center my-6">
+                  <NextLink className="inline-block  font-medium text-center  border-primary/10 bg-contrast text-primary w-fit">
+                    <Button>
+                      {isLoading ? 'Loading...' : 'Suivant'}
+                    </Button>
+                    
                   </NextLink>
                 </div>
               </>

@@ -349,11 +349,10 @@ export function CartEmpty({hidden = false, layout = 'drawer', onClose}) {
     <div ref={scrollRef} className={container[layout]} hidden={hidden}>
       <section className="grid gap-6">
         <Text format>
-          Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-          started!
+        Votre panier est vide pour le moment. No panic
         </Text>
         <div>
-          <Button onClick={onClose}>Continue shopping</Button>
+          <Button onClick={onClose}>Continuez vos achats</Button>
         </div>
       </section>
       <section className="grid gap-8 pt-16">

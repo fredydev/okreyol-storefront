@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-
 import {missingClass, formatText} from '~/lib/utils';
 
 export function Text({
@@ -24,6 +23,7 @@ export function Text({
     lead: 'text-lead font-medium',
     copy: 'text-copy',
     fine: 'text-fine subpixel-antialiased',
+    dnfrd: 'text-2xl'
   };
 
   const widths = {
@@ -62,19 +62,30 @@ export function Heading({
     heading: 'font-bold text-heading',
     lead: 'font-bold text-lead',
     copy: 'font-medium text-copy',
+    dnfrd: 'font-bold text-2xl'
   };
 
-  
+  const widths = {
+    default: 'max-w-prose',
+    narrow: 'max-w-prose-narrow',
+    wide: 'max-w-prose-wide',
+  };
   const styles = clsx(
     missingClass(className, 'whitespace-') && 'whitespace-pre-wrap',
-    // missingClass(className, 'max-w-') && widths[width],
+    missingClass(className, 'max-w-') && widths[width],
     missingClass(className, 'font-') && sizes[size],
     className,
   );
 
   return (
     <Component {...props} className={styles+`${center?' text-center':''}`}>
-      {format ? formatText(children) : children}
+      {
+        format 
+        ? 
+        formatText(children) 
+        : 
+        children
+      }
     </Component>
   );
 }
@@ -122,7 +133,7 @@ export function Section({
     <Component  className={`${bg?bg:''} donfred flex-col `}>
       <div {...props} className={styles+'  flex-col donfred container mx-auto '}>
         {heading && (
-          <Heading center={center}  className={padding === 'y' ? paddings['x'] : ''}>
+          <Heading center={center} size='dnfrd' className={padding === 'y' ? paddings['x'] : ''}>
             {heading}
           </Heading>
         )}
@@ -137,11 +148,12 @@ export function PageHeader({
   children,
   className,
   heading,
-  variant = 'default',
+  variant = 'x',
   ...props
 }) {
   const variants = {
     default: 'grid w-full gap-8 p-6 py-8 md:p-8 lg:p-12 justify-items-start',
+    x : 'grid w-full gap-8 px-6 mt-8 md:px-8 lg:px-12 justify-items-start',
     blogPost:
       'grid md:text-center w-full gap-4 p-6 py-8 md:p-8 lg:p-12 md:justify-items-center',
     allCollections:
@@ -154,7 +166,7 @@ export function PageHeader({
     <header >
       <div {...props} className={styles+' flex-col donfred container mx-auto '}>
         {heading && (
-          <Heading as="h1" width="narrow" size="heading" className="inline-block">
+          <Heading as="h1" width="narrow" size="dnfrd" className="inline-block">
             {heading}
           </Heading>
         )}

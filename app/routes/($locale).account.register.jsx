@@ -3,7 +3,7 @@ import {Form, useActionData} from '@remix-run/react';
 import {useState} from 'react';
 
 import {getInputStyleClasses} from '~/lib/utils';
-import {Link} from '~/components';
+import {Button, Heading, Link} from '~/components';
 
 import {doLogin} from './($locale).account.login';
 
@@ -87,9 +87,9 @@ export default function Register() {
   const [nativePasswordError, setNativePasswordError] = useState(null);
 
   return (
-    <div className="flex justify-center my-24 px-4">
-      <div className="max-w-md w-full">
-        <h1 className="text-4xl">Create an Account.</h1>
+    <div className="flex justify-center items-center flex-col my-24 px-4 ">
+      <div className="max-w-md w-full border shadow-sm shadow-gray-300 bg-white px-4 py-8">
+      <Heading size='dnfrd'>Créer un compte</Heading>
         {/* TODO: Add onSubmit to validate _before_ submission with native? */}
         <Form
           method="post"
@@ -103,7 +103,7 @@ export default function Register() {
           )}
           <div>
             <input
-              className={`mb-1 ${getInputStyleClasses(nativeEmailError)}`}
+              className={`mb-1 ${getInputStyleClasses(nativeEmailError)} rounded-none py-3`}
               id="email"
               name="email"
               type="email"
@@ -128,7 +128,7 @@ export default function Register() {
           </div>
           <div>
             <input
-              className={`mb-1 ${getInputStyleClasses(nativePasswordError)}`}
+              className={`mb-1 ${getInputStyleClasses(nativePasswordError)} rounded-none py-3`}
               id="password"
               name="password"
               type="password"
@@ -162,19 +162,21 @@ export default function Register() {
             )}
           </div>
           <div className="flex items-center justify-between">
-            <button
-              className="bg-primary text-contrast rounded py-2 px-4 focus:shadow-outline block w-full"
+            <Button
+            variant="primary"
+              className="text-sm mb-2 mt-6"
+              width="full"
               type="submit"
               disabled={!!(nativePasswordError || nativeEmailError)}
             >
               Create Account
-            </button>
+            </Button>
           </div>
           <div className="flex items-center mt-8 border-t border-gray-300">
             <p className="align-baseline text-sm mt-6">
-              Already have an account? &nbsp;
+              Vous avez déja a compte ? &nbsp;
               <Link className="inline underline" to="/account/login">
-                Sign in
+                Connectez-vous
               </Link>
             </p>
           </div>

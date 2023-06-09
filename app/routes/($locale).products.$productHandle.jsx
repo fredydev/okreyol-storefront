@@ -1,10 +1,15 @@
 import {useRef, Suspense, useMemo, useState} from 'react';
 import {Disclosure, Listbox, RadioGroup, Tab} from '@headlessui/react';
 import BreadCrumb from "../components/BreadCrumb"
-import { StarIcon } from '@heroicons/react/20/solid'
+import CustomerReviews from "../components/CustomerReviews"
+import { StarIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import {defer} from '@shopify/remix-oxygen';
+import {getAllReviewsForProduct} from '../api/reviews'
+import {FiClock, FiTruck} from "react-icons/fi"
+import {GiPadlock} from "react-icons/gi"
+import { useSpring, animated } from "react-spring";
 import {
   useLoaderData,
   Await,
@@ -30,10 +35,11 @@ import {
   AddToCartButton,
   Button,
 } from '~/components';
-import {getExcerpt} from '~/lib/utils';
+import { truncateText} from '~/lib/utils';
 import {seoPayload} from '~/lib/seo.server';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {routeHeaders, CACHE_SHORT} from '~/data/cache';
+import { type } from 'os';
 
 export const headers = routeHeaders;
 
@@ -60,7 +66,10 @@ export async function loader({params, request, context}) {
   if (!product?.id) {
     throw new Response('product', {status: 404});
   }
-
+  const shopifyProductId = product.id
+  const shopifyPrefix = 'gid://shopify/Product/'
+  const productId = shopifyProductId.split(shopifyPrefix)[1]
+  const reviews = await getAllReviewsForProduct(productId)
   const recommended = getRecommendedProducts(context.storefront, product.id);
   const firstVariant = product.variants.nodes[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
@@ -82,6 +91,7 @@ export async function loader({params, request, context}) {
 
   return defer(
     {
+      reviews,
       product,
       shop,
       storeDomain: shop.primaryDomain.url,
@@ -102,113 +112,36 @@ export async function loader({params, request, context}) {
   );
 }
 
-export  function Producto() {
-  const {product, shop, recommended} = useLoaderData();
-  const {media, title, vendor, descriptionHtml} = product;
-  const {shippingPolicy, refundPolicy} = shop;
 
-  return (
-    <>
-      <Section className="px-0 md:px-8 lg:px-12">
-        <div className="grid items-start md:gap-6 lg:gap-20 md:grid-cols-2 lg:grid-cols-3">
-          <ProductGallery
-            media={media.nodes}
-            className="w-full lg:col-span-2"
-          />
-          <div className="sticky md:-mb-nav md:top-nav md:-translate-y-nav md:h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
-            <section className="flex flex-col w-full max-w-xl gap-8 p-6 md:mx-auto md:max-w-sm md:px-0">
-              <div className="grid gap-2">
-                <Heading as="h1" className="whitespace-normal">
-                  {title}
-                </Heading>
-                {vendor && (
-                  <Text className={'opacity-50 font-medium'}>{vendor}</Text>
-                )}
-              </div>
-              <ProductForm />
-              <div className="grid gap-4 py-4">
-                {descriptionHtml && (
-                  <ProductDetail
-                    title="Product Details"
-                    content={descriptionHtml}
-                  />
-                )}
-                {shippingPolicy?.body && (
-                  <ProductDetail
-                    title="Shipping"
-                    content={getExcerpt(shippingPolicy.body)}
-                    learnMore={`/policies/${shippingPolicy.handle}`}
-                  />
-                )}
-                {refundPolicy?.body && (
-                  <ProductDetail
-                    title="Returns"
-                    content={getExcerpt(refundPolicy.body)}
-                    learnMore={`/policies/${refundPolicy.handle}`}
-                  />
-                )}
-              </div>
-            </section>
-          </div>
-        </div>
-      </Section>
-      <Suspense fallback={<Skeleton className="h-32" />}>
-        <Await
-          errorElement="There was a problem loading related products"
-          resolve={recommended}
-        >
-          {(products) => (
-            <ProductSwimlane title="Related Products" products={products} />
-          )}
-        </Await>
-      </Suspense>
-    </>
-  );
-}
 
-const productol = {
-  name: 'Zip Tote Basket',
-  price: '$140',
-  rating: 4,
-  images: [
-    {
-      id: 1,
-      name: 'Angled view',
-      src: 'https://tailwindui.com/img/ecommerce-images/product-page-03-product-01.jpg',
-      alt: 'Angled front view with bag zipped and handles upright.',
-    },
-    // More images...
-  ],
-  colors: [
-    { name: 'Washed Black', bgColor: 'bg-gray-700', selectedColor: 'ring-gray-700' },
-    { name: 'White', bgColor: 'bg-white', selectedColor: 'ring-gray-400' },
-    { name: 'Washed Gray', bgColor: 'bg-gray-500', selectedColor: 'ring-gray-500' },
-  ],
-  description: `
-    <p>The Zip Tote Basket is the perfect midpoint between shopping tote and comfy backpack. With convertible straps, you can hand carry, should sling, or backpack this convenient and spacious bag. The zip top and durable canvas construction keeps your goods protected for all-day use.</p>
-  `,
-  details: [
-    {
-      name: 'Features',
-      items: [
-        'Multiple strap configurations',
-        'Spacious interior with top zip',
-        'Leather handle and tabs',
-        'Interior dividers',
-        'Stainless strap loops',
-        'Double stitched construction',
-        'Water-resistant',
-      ],
-    },
-    // More sections...
-  ],
-}
+const perks = [
+  {
+    id: 1,
+    perkname: 'Livraison gratuite',
+    perkdescription: 'Livraison gratuite',
+    icone: <FiTruck />
+  },
+
+  {
+    id: 3,
+    perkname: 'Délai de livraison',
+    perkdescription: 'Délai de livraison : 7 jours ouvrables',
+    icone: <FiClock />
+  },
+  {
+    id: 4,
+    perkname: 'Paiement sécurisée',
+    perkdescription: 'Paiement sécurisée',
+    icone: <GiPadlock />
+  }
+]
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 export default function Product() {
-  const {product,shop} = useLoaderData();
-  const {media, title, vendor, descriptionHtml, features} = product;
+  const {product,shop, recommended, reviews} = useLoaderData();
+  const {media, title, vendor, descriptionHtml, french_desc ,features, id, shortname} = product;
   const {shippingPolicy, refundPolicy} = shop;
   const urls = media.nodes.reduce((acc, curr) => {
     if (curr.previewImage && curr.previewImage.url) {
@@ -216,190 +149,9 @@ export default function Product() {
     }
     return acc;
   }, []);
-  console.log(shippingPolicy)
-  // const [selectedColor, setSelectedColor] = useState(product.colors[0])
-
-  return (
-    <div className="bg-white border-4 border-red-500">
-      <div className="mx-auto container px-6 md:px-8 lg:px-12 py-8 s ">
-        <BreadCrumb />
-        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-          {/* Image gallery */}
-          <Tab.Group as="div" className="flex flex-col-reverse">
-            {/* Image selector */}
-            <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-              <Tab.List className="grid grid-cols-4 gap-6">
-                {urls.map((image) => (
-                  <Tab
-                    key={image}
-                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span className="sr-only">{image}</span>
-                        <span className="absolute inset-0 overflow-hidden rounded-md">
-                          <img src={image} alt="" className="h-full w-full object-cover object-center" />
-                        </span>
-                        <span
-                          className={classNames(
-                            selected ? 'ring-corange' : 'ring-transparent',
-                            'pointer-events-none absolute inset-0 rounded-md rin ring-o'
-                          )}
-                          aria-hidden="true"
-                        />
-                      </>
-                    )}
-                  </Tab>
-                ))}
-              </Tab.List>
-            </div>
-
-            <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
-              {urls.map((image) => (
-                <Tab.Panel key={image}>
-                  <img
-                    src={image}
-                    alt={image}
-                    className="h-full w-full object-cover object-center sm:rounded-lg"
-                  />
-                </Tab.Panel>
-              ))}
-            </Tab.Panels>
-          </Tab.Group>
-                {/* {documentToReactComponents(JSON.parse(features.value))} */}
-          {/* Product info */}
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
-            {vendor && (
-                  <Text className={'opacity-50 font-medium'}>{vendor}</Text>
-                )}
-            <div className="mt-3">
-              <h2 className="sr-only">Product information</h2>
-              <p className="text-3xl tracking-tight text-gray-900">{productol.price}</p>
-            </div>
-
-            {/* Reviews */}
-            <div className="mt-3">
-              <h3 className="sr-only">Reviews</h3>
-              <div className="flex items-center">
-                <div className="flex items-center">
-                  {[0, 1, 2, 3, 4].map((rating) => (
-                    <StarIcon
-                      key={rating}
-                      className={classNames(
-                        productol.rating > rating ? 'text-okgreen' : 'text-gray-300',
-                        'h-5 w-5 flex-shrink-0'
-                      )}
-                      aria-hidden="true"
-                    />
-                  ))}
-                </div>
-                <p className="sr-only">{productol.rating} out of 5 stars</p>
-              </div>
-            </div>
-                        
-           
-
-            <form className="mt-6">
-              {/* Colors */}
-              
-
-              <div className="sm:flex-col1 mt-10 flex">
-                <button
-                  type="submit"
-                  className="flex max-w-xs flex-1 items-center justify-center rounded-full border border-transparent bg-corange px-8 py-3 text-base font-medium text-white hover:bg-okgreen-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
-                >
-                  Add to bag
-                </button>
-
-                <button
-                  type="button"
-                  className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-                >
-                  <HeartIcon className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
-                  <span className="sr-only">Add to favorites</span>
-                </button>
-              </div>
-            </form>
-                        
-            <section aria-labelledby="details-heading" className="mt-12">
-              <h2 id="details-heading" className="sr-only">
-                Additional details
-              </h2>
-
-              <div className="divide-y divide-gray-200 border-t">
-                {features&&JSON.parse(features.value).children.map((detail, idx) => (
-                  <Disclosure as="div" key={idx}>
-                    {({ open }) => (
-                      <>
-                        <h3>
-                          <Disclosure.Button className="group relative flex w-full items-center justify-between py-6 text-left">
-                            <span
-                              className={classNames(open ? 'text-corange' : 'text-gray-900', 'text-sm font-medium')}
-                            >
-                              {"Caractéristiques"}
-                            </span>
-                            <span className="ml-6 flex items-center">
-                              {open ? (
-                                <MinusIcon
-                                  className="block h-6 w-6 text-corange"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                <PlusIcon
-                                  className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
-                                  aria-hidden="true"
-                                />
-                              )}
-                            </span>
-                          </Disclosure.Button>
-                        </h3>
-                        <Disclosure.Panel as="div" className="prose prose-sm pb-6 transition-max-height duration-500 ease-in-out">
-                          <ul >
-                            {detail.children.map((item) => (
-                              <li key={item.children[0].value}>{item.children[0].value}</li>
-                            ))}
-                          </ul>
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-                ))}
-              </div>
-              {shippingPolicy?.body && (
-                  <ProductDetail
-                    title="Expédition"
-                    content={getExcerpt(shippingPolicy.body)}
-                    learnMore={`/policies/${shippingPolicy.handle}`}
-                  />
-                )}
-                {refundPolicy?.body && (
-                  <ProductDetail
-                    title="Retour"
-                    content={getExcerpt(refundPolicy.body)}
-                    learnMore={`/policies/${refundPolicy.handle}`}
-                  />
-                )}
-            </section>
-          </div>
-           
-        </div>
-        <div className="mt-6">
-              <h3 className="sr-onl">Description</h3>
-
-              <div
-                className="space-y-6 text-base text-gray-700"
-                dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-              />
-            </div>
-      </div>
-    </div>
-  )
-}
-
-export function ProductForm() {
-  const {product, analytics, storeDomain} = useLoaderData();
-
+  console.log(product)
+  let reviewTotalCount = reviews.length>0?reviews.length : 0
+  let reviewAverage = reviewTotalCount ? reviews.reduce((acc, review) => acc+review.reviewRate,0)/reviewTotalCount : 0
   const [currentSearchParams] = useSearchParams();
   const {location} = useNavigation();
 
@@ -440,6 +192,157 @@ export function ProductForm() {
    * A developer can opt out of this, too.
    */
   const selectedVariant = product.selectedVariant ?? firstVariant;
+  return (
+    <div className="bg-white ">
+      <div className="mx-auto container px-6 md:px-8 lg:px-12 py-8 s ">
+        <BreadCrumb product={product}/>
+        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+          {/* Image gallery */}
+          <Tab.Group as="div" className="flex flex-col-reverse">
+            {/* Image selector */}
+            <div className="mx-auto mt-6  w-full max-w-2xl sm:block lg:max-w-none">
+              <Tab.List className="grid grid-cols-4 gap-6">
+                {urls.map((image) => (
+                  <Tab
+                    key={image}
+                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+                  >
+                    {({ selected }) => (
+                      <>
+                        <span className="sr-only">{image}</span>
+                        <span className="absolute inset-0 overflow-hidden rounded-md">
+                          <img src={image} alt={image} className="h-full w-full object-cover object-center" />
+                        </span>
+                        <span
+                          className={classNames(
+                            selected ? 'ring-corange' : 'ring-transparent',
+                            'pointer-events-none absolute inset-0 rounded-md rin ring-o'
+                          )}
+                          aria-hidden="true"
+                        />
+                      </>
+                    )}
+                  </Tab>
+                ))}
+              </Tab.List>
+            </div>
+
+            <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
+              {urls.map((image) => (
+                <Tab.Panel key={image} className={"border border-gray-100"}>
+                  <img
+                    src={image}
+                    alt={image}
+                    className="h-full w-full object-cover object-center sm:rounded-lg"
+                  />
+                </Tab.Panel>
+              ))}
+            </Tab.Panels>
+          </Tab.Group>
+                {/* {documentToReactComponents(JSON.parse(features.value))} */}
+          {/* Product info */}
+          <div className="mt-10 sm:mt-16 lg:mt-0 border border-dashed">
+          {vendor && (
+                  <Text className={'opacity-50 font-medium text-sm'}>{vendor}</Text>
+                )}
+            <h1 className="text-3xl font-normal tracking-tight text-gray-900">{shortname ? shortname.value : title}</h1>
+            
+            <div className="mt-3">
+              <h2 className="sr-only">Product information</h2>
+              <div className="flex items-center mb-3">
+                {[0, 1, 2, 3, 4].map((rating) => ( 
+                  <StarIcon
+                    key={rating}
+                    className={classNames(
+                      reviewAverage > rating ? 'text-yellow-400' : 'text-gray-300',
+                      'flex-shrink-0 h-5 w-5'
+                    )}
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+              <p className="text-3xl tracking-tight text-gray-900">
+                <Money
+                  withoutTrailingZeros
+                  data={selectedVariant?.price}
+                  as="span"
+                /> EUR
+              </p>
+            </div>
+            <p className='my-2 text-[10px]'>Taxes incluses. <Link className='underline' to='/policies/shipping-policies'>Frais d'expédition</Link> calculés à l'étape de paiement. </p>
+
+            <ProductForm selectedVariant={selectedVariant}  searchParamsWithDefaults={searchParamsWithDefaults}/>
+            <div className='grid grid-cols-2 gap-2'>
+              {perks.map(perk =>{
+                console.log(selectedVariant?.price)
+                if(Number(selectedVariant?.price.amount)<100&&perk.perkdescription.toLowerCase()==="livraison gratuite") return null
+                return(
+                  <div className="flex p-2 items-center bg-gray-100 gap-4 rounded-sm" key={perk.id}>
+                    <span className='text-xl'>{perk.icone}</span>
+                    <span className=' text-[8px] font-semibold'>{perk.perkdescription}</span>
+                  </div>
+                )
+              })}
+            </div>     
+            <section aria-labelledby="details-heading" className="mt-12">
+              <h2 id="details-heading" className="sr-only">
+                Additional details
+              </h2>
+
+              <div className="divide-y divide-gray-200 border-t ">
+                {features&&(
+                  <Accordion  title={"Caractéristiques"} content={features.value} />
+                )}
+              </div>
+              {shippingPolicy?.body && (
+                  <Accordion
+                    title="Expédition"
+                    content={truncateText(shippingPolicy.body,"Frais d'Expédition")}
+                    learnMore={`/policies/${shippingPolicy.handle}`}
+                  />
+                )}
+                {refundPolicy?.body && (
+                  <Accordion
+                    title="Retour"
+                    content={truncateText(refundPolicy.body, "Processus de Retour :")}
+                    learnMore={`/policies/${refundPolicy.handle}`}
+                  />
+                )}
+            </section>
+          </div>
+           
+        </div>
+        <div className="my-16">
+          <Text className="sr-onl font-bold mt-4 ">Note de l'artisan </Text>
+
+          <div
+            className="mt-4 space-y-6 text-base text-gray-700"
+            dangerouslySetInnerHTML={{ __html: french_desc? french_desc.value : descriptionHtml }}
+          />
+        </div>
+        <div className="" id="reviews-section">
+          <CustomerReviews reviews={reviews} productId={id} reviewAverage={reviewAverage} reviewTotalCount={reviewTotalCount}/>
+        </div>
+        
+      </div>
+      <Suspense fallback={<Skeleton className="h-32" />}>
+        <Await
+          errorElement="There was a problem loading related products"
+          resolve={recommended}
+        >
+          {(products) => (
+            <ProductSwimlane  title="Related Products" products={products} />
+          )}
+        </Await>
+        </Suspense>
+    </div>
+  )
+}
+const variantNames = ["type","types", "taille","tailles", "couleur", "couleurs","poids", "dimension","dimensions","épaisseur"]
+export function ProductForm({searchParamsWithDefaults, selectedVariant}) {
+  const {product, analytics, storeDomain} = useLoaderData();
+
+  
   const isOutOfStock = !selectedVariant?.availableForSale;
 
   const isOnSale =
@@ -451,9 +354,10 @@ export function ProductForm() {
     ...analytics.products[0],
     quantity: 1,
   };
+  console.log(product.options)
 
   return (
-    <div className="grid gap-10">
+    <div className="grid gap-10 my-4">
       <div className="grid gap-4">
         <ProductOptions
           options={product.options}
@@ -493,7 +397,7 @@ export function ProductForm() {
                   {isOnSale && (
                     <Money
                       withoutTrailingZeros
-                      data={selectedVariant?.compareAtPrice}
+                      data={selectedVariant?.compareAtPrice+"yolo"}
                       as="span"
                       className="opacity-50 strike"
                     />
@@ -503,6 +407,7 @@ export function ProductForm() {
             )}
             {!isOutOfStock && (
               <ShopPayButton
+              className=''
                 width="100%"
                 variantIds={[selectedVariant?.id]}
                 storeDomain={storeDomain}
@@ -524,11 +429,11 @@ function ProductOptions({options, searchParamsWithDefaults}) {
         .map((option) => (
           <div
             key={option.name}
-            className="flex flex-col flex-wrap mb-4 gap-y-2 last:mb-0"
+            className="flex flex-col flex-wrap mb-4 gap-y-2 last:mb-0 "
           >
-            <Heading as="legend" size="lead" className="min-w-[4rem]">
+            {variantNames.includes(option.name.toLowerCase())&&<Heading as="legend" size="lead" className="min-w-[4rem]">
               {option.name}
-            </Heading>
+            </Heading>}
             <div className="flex flex-wrap items-baseline gap-4">
               {/**
                * First, we render a bunch of <Link> elements for each option value.
@@ -657,64 +562,128 @@ function ProductOptionLink({
     </Link>
   );
 }
+function Accordion({learnMore,title, content}) {
+  const [open, setOpen] = useState(false);
+  //toggle accordion function
+  let toggleHandler = (e) => {
+    //switch state
+    setOpen(!open);
+  };
 
-function ProductDetail({title, content, learnMore}) {
+  const openAnimation = useSpring({
+    from: { opacity: "0", maxHeight: "55px" },
+    to: { opacity: "1", maxHeight: open ? "2000px" : "55px" },
+    config: { duration: "500" }
+  });
+
+  //rotate animation
+  const iconAnimation = useSpring({
+    from: {
+      transform: "rotate(0deg)",
+    },
+    to: {
+      transform: open ? "rotate(180deg)" : "rotate(0deg)",
+      color: "#000000"
+    },
+    config: { duration: "120" }
+  });
+
   return (
-    <Disclosure key={title} as="div" className="grid w-full gap-2">
-      {({open}) => (
-        <>
-          {/* <Disclosure.Button className="text-left">
-            <div className="flex justify-between">
-              <Text size="lead" className={"text-sm font-medium"} as="h4">
-                {title}
-              </Text>
-              <IconClose
-                className={clsx(
-                  'transition-transform transform-gpu duration-200',
-                  !open && 'rotate-[45deg]',
-                )}
-              />
-            </div>
-          </Disclosure.Button> */}
-          <Disclosure.Button className="group relative flex w-full items-center justify-between py-6 text-left">
-                            <span
-                              className={classNames(open ? 'text-corange' : 'text-gray-900', 'text-sm font-medium')}
-                            >
-                              {title}
-                            </span>
-                            <span className="ml-6 flex items-center">
-                              {open ? (
-                                <MinusIcon
-                                  className="block h-6 w-6 text-corange"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                <PlusIcon
-                                  className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
-                                  aria-hidden="true"
-                                />
-                              )}
-                            </span>
-                          </Disclosure.Button>
-          <Disclosure.Panel className={'pb-4 pt-2 grid gap-2'}>
-            <div
-              className="prose dark:prose-invert"
-              dangerouslySetInnerHTML={{__html: content}}
-            />
-            {learnMore && (
-              <div className="">
-                <Link
-                  className="pb-px border-b border-primary/30 text-primary/50"
-                  to={learnMore}
-                >
-                  Learn more
-                </Link>
-              </div>
-            )}
-          </Disclosure.Panel>
-        </>
+    <animated.div className="w-full max-h-full  border-b border-gray-200 text-white overflow-hidden cursor-pointer scroll-auto" style={openAnimation}>
+      <div className="flex justify-between py-[17px] px-[10px] items-center text-black " onClick={toggleHandler}>
+        <h4 className='font-normal'>{title}</h4>
+        <animated.i style={iconAnimation}>
+        <ChevronDownIcon className={`h-5 w-5`} />
+        </animated.i>
+      </div>
+      <div
+        className="prose dark:prose-invert text-xs mt-1 p-3"
+        dangerouslySetInnerHTML={{__html: content}}
+      />    
+      {learnMore && (
+        <div className="p-3">
+          <Link
+            className="pb-px border-b border-primary/30 text-primary/50 font-normal italic hover:text-corange"
+            to={learnMore}
+          >
+            Learn more
+          </Link>
+        </div>
       )}
-    </Disclosure>
+    </animated.div>
+  );
+}
+function ProductDetail({title, content, learnMore}) {
+  const [open, setOpen] = useState(false);
+  //toggle accordion function
+  let toggleHandler = (e) => {
+    //switch state
+    setOpen(!open);
+  };
+  const openAnimation = useSpring({
+    from: { opacity: "0", maxHeight: "25px" },
+    to: { opacity: "1", maxHeight: open ? "200px" : "25px" },
+    config: { duration: "300" }
+  });
+  
+  //rotate animation
+  const iconAnimation = useSpring({
+    from: {
+      transform: "rotate(0deg)",
+      color: "#ffff"
+    },
+    to: {
+      transform: open ? "rotate(180deg)" : "rotate(0deg)",
+      color: open ? "#10d6f5" : "#fff"
+    },
+    config: { duration: "120" }
+  });
+  return (  
+    <animated.div className="w-full max-h-full py-[17px] px-[10px] border-b border-gray-200 text-white overflow-hidden cursor-pointer" style={openAnimation}>
+      <div className="flex justify-between items-center" onClick={toggleHandler}>
+        <h4 className='text-black' >{title}</h4>
+        <animated.i style={iconAnimation}>
+        <ChevronRightIcon className={` h-5 w-5`} />
+        </animated.i>
+      </div>
+      <div className="prose dark:prose-invert text-sm" dangerouslySetInnerHTML={{__html: content}}/>
+    </animated.div>
+    // <Disclosure >
+    //     {({ open }) => (
+    //       <>
+    //         <Disclosure.Button className="flex items-center  justify-between w-full border-b border-gray-200  text-gray-700 transition-colors duration-300  px-4 rounded-md py-4">
+    //           <span> {title}</span>
+    //           <ChevronRightIcon className={`${open?"rotate-90 transform":""} h-5 w-5`} />
+    //         </Disclosure.Button>
+    //         <Disclosure.Panel
+    //           className={`${
+    //             open ? 'transition-max-height duration-700 ease-out' : 'hidden'
+    //           } bg-gray-100 p-4 overflow-hidden`}
+    //         >
+    //           {typeof content === 'string' ? <div
+    //             className="prose dark:prose-invert text-sm"
+    //             dangerouslySetInnerHTML={{__html: content}}
+    //           /> :<ul className=' p-2 list-disc '>
+    //           {content.map((item) => (
+    //             <li className='l   ' key={item.children[0].value}>{item.children[0].value}</li>
+    //           ))}
+    //         </ul>}
+    //           {learnMore && (
+    //           <div className="">
+    //             <Link
+    //               className="pb-px border-b border-primary/30 text-primary/50 font-normal italic hover:text-corange"
+    //               to={learnMore}
+    //             >
+    //               Learn more
+    //             </Link>
+    //           </div> )}
+    //         </Disclosure.Panel>
+    //       </>
+    //     )}
+    //   </Disclosure>
+
+      
+    
   );
 }
 
@@ -772,8 +741,25 @@ const PRODUCT_QUERY = `#graphql
         name
         values
       }
-      features: metafield(namespace:"details",key:"features") {
+      features: metafield(namespace:"custom",key:"features") {
         value
+      }
+      french_desc: metafield(namespace:"custom",key:"description") {
+        value
+      }
+      shortname: metafield(namespace:"descriptors",key:"subtitle") {
+        value
+      }
+      reviewContent: metafield(namespace:"custom",key:"review_content") {
+        value
+      }
+      collection: collections(first:1) {
+        edges {
+          node {
+            handle
+            title
+          }
+        }
       }
       selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
         ...ProductVariantFragment
@@ -853,3 +839,18 @@ async function getRecommendedProducts(storefront, productId) {
 
   return mergedProducts;
 }
+
+const CUSTOMER_CREATE_REVIEW = `#graphql
+  mutation productUpdate($input: ProductInput!) {
+    productUpdate(input: $input) {
+      product {
+        
+      }
+      userErrors {
+        
+        field
+        message
+      }
+    }
+  }
+`;

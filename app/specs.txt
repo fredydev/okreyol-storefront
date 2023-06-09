@@ -1,0 +1,21 @@
+react+tailwindcss
+page contact us (style flex and responsive): 
+    - div:
+        - heading: Vous cherchez des réponses
+        - div:
+            p:jetez un coup d'oeilà notre page <a>faq</a>
+        - div:
+            p: Vous n'avez pas trouvé la réponse à votre question ?
+            p: Remplissez notre formulaire de contact et nous vous répondrons dans les plus brefs délais.
+    - div:
+        - heading: Envoyez-nous un message
+        - form:
+            - label: nom
+            - input
+            - label: email
+            - input
+            - label: message
+            - textarea
+            - button: Envoyer
+
+   

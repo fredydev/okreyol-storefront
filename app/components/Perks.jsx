@@ -8,8 +8,8 @@ export function Perks({
 }) {
 console.log(perks)
   return (
-    <Section {...props} bg='bg-lightgray' className={'text-okgreen'}>
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-32 lg:px-8">
+    <Section {...props} bg='bg-white' className={'text-okgreen'}>
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-32 lg:px-8 parallax-sectiono">
             <div className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-0">
               {perks.map((perk) => (
                 <div

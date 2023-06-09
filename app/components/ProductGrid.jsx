@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 
 import {getImageLoadingPriority} from '~/lib/const';
 import {Button, Grid, ProductCard, Link} from '~/components';
+import NewsLetters from './NewsLetters'
 
 export function ProductGrid({url, collection, ...props}) {
   const [initialProducts, setInitialProducts] = useState(
@@ -49,12 +50,13 @@ export function ProductGrid({url, collection, ...props}) {
 
   if (!haveProducts) {
     return (
-      <>
-        <p>No products found on this collection</p>
+      <div className='text-center'>
+        <p>Cette collection est aujourd'hui sans article, mais pas de souci</p>
         <Link to="/products">
-          <p className="underline">Browse catalog</p>
+          <p className="underline">Rechercher dans tout le catalogue</p>
         </Link>
-      </>
+        <NewsLetters heading={"Assurez-vous d'etre au courant des nouveaux produits de cette collection"}/>
+      </div>
     );
   }
 

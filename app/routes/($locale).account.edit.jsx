@@ -108,7 +108,7 @@ export default function AccountDetailsEdit() {
   return (
     <>
       <Text className="mt-4 mb-6" as="h3" size="lead">
-        Update your profile
+        Mettre à jour le profil
       </Text>
       <Form method="post">
         {actionData?.formError && (
@@ -118,31 +118,31 @@ export default function AccountDetailsEdit() {
         )}
         <div className="mt-3">
           <input
-            className={getInputStyleClasses()}
+            className={`${getInputStyleClasses()} rounded-none`}
             id="firstName"
             name="firstName"
             type="text"
             autoComplete="given-name"
-            placeholder="First name"
+            placeholder="Prénom"
             aria-label="First name"
             defaultValue={customer.firstName ?? ''}
           />
         </div>
         <div className="mt-3">
           <input
-            className={getInputStyleClasses()}
+            className={`${getInputStyleClasses()} rounded-none`}
             id="lastName"
             name="lastName"
             type="text"
             autoComplete="family-name"
-            placeholder="Last name"
+            placeholder="Nom "
             aria-label="Last name"
             defaultValue={customer.lastName ?? ''}
           />
         </div>
         <div className="mt-3">
           <input
-            className={getInputStyleClasses()}
+            className={`${getInputStyleClasses()} rounded-none`}
             id="phone"
             name="phone"
             type="tel"
@@ -154,7 +154,7 @@ export default function AccountDetailsEdit() {
         </div>
         <div className="mt-3">
           <input
-            className={getInputStyleClasses(actionData?.fieldErrors?.email)}
+            className={`${getInputStyleClasses(actionData?.fieldErrors?.email)} rounded-none`}
             id="email"
             name="email"
             type="email"
@@ -171,11 +171,11 @@ export default function AccountDetailsEdit() {
           )}
         </div>
         <Text className="mb-6 mt-6" as="h3" size="lead">
-          Change your password
+          Changer votre mot de passe
         </Text>
         <Password
           name="currentPassword"
-          label="Current password"
+          label="Mot de passe actuel"
           passwordError={actionData?.fieldErrors?.currentPassword}
         />
         {actionData?.fieldErrors?.currentPassword && (
@@ -185,12 +185,12 @@ export default function AccountDetailsEdit() {
         )}
         <Password
           name="newPassword"
-          label="New password"
+          label="Nouveau mot de passe"
           passwordError={actionData?.fieldErrors?.newPassword}
         />
         <Password
           name="newPassword2"
-          label="Re-enter new password"
+          label="Entrez à nouveau le password"
           passwordError={actionData?.fieldErrors?.newPassword2}
         />
         <Text
@@ -201,7 +201,7 @@ export default function AccountDetailsEdit() {
             actionData?.fieldErrors?.newPassword && 'text-red-500',
           )}
         >
-          Passwords must be at least 8 characters.
+          Le mot de passe doit contenir au moins 8 caractères.
         </Text>
         {actionData?.fieldErrors?.newPassword2 ? <br /> : null}
         {actionData?.fieldErrors?.newPassword2 && (
@@ -222,7 +222,7 @@ export default function AccountDetailsEdit() {
         </div>
         <div className="mb-4">
           <Button to=".." className="text-sm" variant="secondary" width="full">
-            Cancel
+            Annuler
           </Button>
         </div>
       </Form>
@@ -234,7 +234,7 @@ function Password({name, passwordError, label}) {
   return (
     <div className="mt-3">
       <input
-        className={getInputStyleClasses(passwordError)}
+        className={`${getInputStyleClasses(passwordError)} rounded-none`}
         id={name}
         name={name}
         type="password"

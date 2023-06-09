@@ -3,15 +3,17 @@ import {Suspense} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
 import {AnalyticsPageType} from '@shopify/hydrogen';
 
-import { FeaturedCollections, Hero} from '~/components';
+import { FeaturedCollections, Hero, ProductSwimlane} from '~/components';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders, CACHE_SHORT} from '~/data/cache';
 import { Perks } from '~/components/Perks';
+import NewsLetter from '../components/NewsLetter';
 
 export const headers = routeHeaders;
 
 export async function loader({params, context}) {
+  
   const {language, country} = context.storefront.i18n;
 
   if (
@@ -22,8 +24,8 @@ export async function loader({params, context}) {
     // the the locale param must be invalid, send to the 404 page
     throw new Response(null, {status: 404});
   }
-  const {shop, hero,perks} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
-    variables: {handle: 'meilleures-ventes'},
+  const {shop, hero,perks, featuredSection} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
+    variables: {handle: 'ludique', handle2: 'lumieres-et-bois'},
   });
 
   const seo = seoPayload.home();
@@ -33,9 +35,7 @@ export async function loader({params, context}) {
       shop,
       primaryHero: hero,
       perks,
-      // perks,
-      // These different queries are separated to illustrate how 3rd party content
-      // fetching can be optimized for both above and below the fold.
+      featuredSection,
       featuredProducts: context.storefront.query(
         HOMEPAGE_FEATURED_PRODUCTS_QUERY,
         {
@@ -50,6 +50,10 @@ export async function loader({params, context}) {
           },
         },
       ),
+      // perks,
+      // These different queries are separated to illustrate how 3rd party content
+      // fetching can be optimized for both above and below the fold.
+      
       featuredCollections: context.storefront.query(
         FEATURED_COLLECTIONS_QUERY,
         {
@@ -75,7 +79,7 @@ export async function loader({params, context}) {
 const badRequest = (data) => json(data, {status: 400});
 
 export const action = async ({request, context, params}) => {
-  const {storefront} = context;
+  const {storefront, session} = context;
   const formData = await request.formData();
 
   const email = formData.get('email');
@@ -106,7 +110,7 @@ export const action = async ({request, context, params}) => {
     }
 
     
-
+    session.set('newsubscriber', data?.customerCreate?.customer?.id);
     return redirect(params.locale ? `${params.locale}/thanks` : '/thanks');
   } catch (error) {
     console.log(error);
@@ -133,8 +137,10 @@ export default function Homepage() {
     primaryHero,
     perks,
     featuredCollections,
+    featuredProducts,
+    featuredSection
   } = useLoaderData();
-// console.log(perks);
+// console.log(featuredSection);
   // TODO: skeletons vs placeholders
 
   return (
@@ -142,7 +148,22 @@ export default function Homepage() {
       {primaryHero && (
         <Hero {...primaryHero} height="full" top loading="eager" />
       )}
-
+      {featuredProducts && (
+        <Suspense>
+          <Await resolve={featuredProducts}>
+            {({products}) => {
+              if (!products?.nodes) return <></>;
+              return (
+                <ProductSwimlane
+                  products={products.nodes}
+                  title="Nouveautés"
+                  count={4}
+                />
+              );
+            }}
+          </Await>
+        </Suspense>
+      )}
       {featuredCollections && (
         <Suspense>
           <Await resolve={featuredCollections}>
@@ -151,28 +172,18 @@ export default function Homepage() {
               return (
                 <FeaturedCollections
                   collections={collections.nodes}
-                  title="Collections"
+                  title="Collections phares"
                 />
               );
             }}
           </Await>
         </Suspense>
       )}
-      {/* {perks && (
-        <Suspense>
-          <Await resolve={perks}>
-            {({perks}) => {
-              if (!perks?.edges) return <></>
-              return ( */}
-                <Perks
-                  perks={perks.edges}
-                  title="Nos collections du moment"
-                />
-              {/* )
-            }}
-          </Await>
-        </Suspense>
-      )} */}
+      <Perks
+        perks={perks.edges}
+        title="Nos collections du moment"
+      />
+      <NewsLetter featuredSection={featuredSection} />
 </>
   );
 }
@@ -207,9 +218,12 @@ const COLLECTION_CONTENT_FRAGMENT = `#graphql
 `;
 
 const HOMEPAGE_SEO_QUERY = `#graphql
-  query seoCollectionContent($handle: String, $country: CountryCode, $language: LanguageCode)
+  query seoCollectionContent($handle: String, $country: CountryCode, $language: LanguageCode, $handle2: String)
   @inContext(country: $country, language: $language,) {
     hero: collection(handle: $handle) {
+      ...CollectionContent
+    }
+    featuredSection: collection(handle: $handle2) {
       ...CollectionContent
     }
     shop {
@@ -258,7 +272,7 @@ export const FEATURED_COLLECTIONS_QUERY = `#graphql
   query homepageFeaturedCollections($country: CountryCode, $language: LanguageCode)
   @inContext(country: $country, language: $language) {
     collections(
-      first: 4,
+      first: 8,
       sortKey: UPDATED_AT
     ) {
       nodes {

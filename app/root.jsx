@@ -77,7 +77,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className='font-poppins'>
+      <body className='font-asstant text-sm font-thin'>
         <Layout
           layout={data.layout}
           key={`${locale.language}-${locale.country}`}
@@ -114,7 +114,7 @@ export function ErrorBoundary({error}) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className='text-sm'>
         <Layout
           layout={root?.data?.layout}
           key={`${locale.language}-${locale.country}`}
