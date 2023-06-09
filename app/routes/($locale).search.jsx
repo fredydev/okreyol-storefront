@@ -22,6 +22,7 @@ import {PAGINATION_SIZE} from '~/lib/const';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getImageLoadingPriority} from '~/lib/const';
 import {seoPayload} from '~/lib/seo.server';
+import { FaAccessibleIcon, FaArrowAltCircleRight, FaArrowRight } from 'react-icons/fa';
 
 export async function loader({request, context: {storefront}}) {
   const searchParams = new URL(request.url).searchParams;
@@ -76,18 +77,18 @@ export default function Search() {
     <>
       <PageHeader>
         <Heading as="h1" size="copy">
-          Search
+          Recherche
         </Heading>
         <Form method="get" className="relative flex w-full text-heading">
           <Input
             defaultValue={searchTerm}
             name="q"
-            placeholder="Search…"
+            placeholder="Recherche…"
             type="search"
             variant="search"
           />
           <button className="absolute right-0 py-2" type="submit">
-            Go
+            <FaArrowRight />
           </button>
         </Form>
       </PageHeader>
@@ -137,7 +138,7 @@ function NoResults({noResults, recommendations}) {
       {noResults && (
         <Section padding="x">
           <Text className="opacity-50">
-            No results, try a different search.
+            pas de résultat, Essayez une autre recherche.
           </Text>
         </Section>
       )}
@@ -148,14 +149,15 @@ function NoResults({noResults, recommendations}) {
         >
           {({featuredCollections, featuredProducts}) => (
             <>
-              <FeaturedCollections
-                title="Trending Collections"
-                collections={featuredCollections}
-              />
               <ProductSwimlane
-                title="Trending Products"
+                title="Nouveaux Produits"
                 products={featuredProducts}
               />
+              <FeaturedCollections
+                title=" Collections tendances"
+                collections={featuredCollections}
+              />
+              
             </>
           )}
         </Await>

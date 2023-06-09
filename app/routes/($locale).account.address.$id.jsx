@@ -158,50 +158,50 @@ export default function EditAddress() {
           )}
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="firstName"
               name="firstName"
               required
               type="text"
               autoComplete="given-name"
-              placeholder="First name"
+              placeholder="Prénom"
               aria-label="First name"
               defaultValue={address?.firstName ?? ''}
             />
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="lastName"
               name="lastName"
               required
               type="text"
               autoComplete="family-name"
-              placeholder="Last name"
+              placeholder="Nom"
               aria-label="Last name"
               defaultValue={address?.lastName ?? ''}
             />
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="company"
               name="company"
               type="text"
               autoComplete="organization"
-              placeholder="Company"
+              placeholder="Entreprise"
               aria-label="Company"
               defaultValue={address?.company ?? ''}
             />
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="address1"
               name="address1"
               type="text"
               autoComplete="address-line1"
-              placeholder="Address line 1*"
+              placeholder="Adresse 1*"
               required
               aria-label="Address line 1"
               defaultValue={address?.address1 ?? ''}
@@ -209,37 +209,37 @@ export default function EditAddress() {
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="address2"
               name="address2"
               type="text"
               autoComplete="address-line2"
-              placeholder="Address line 2"
+              placeholder="Addresse 2"
               aria-label="Address line 2"
               defaultValue={address?.address2 ?? ''}
             />
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="city"
               name="city"
               type="text"
               required
               autoComplete="address-level2"
-              placeholder="City"
+              placeholder="Ville"
               aria-label="City"
               defaultValue={address?.city ?? ''}
             />
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="province"
               name="province"
               type="text"
               autoComplete="address-level1"
-              placeholder="State / Province"
+              placeholder="Etat / Province"
               required
               aria-label="State"
               defaultValue={address?.province ?? ''}
@@ -247,12 +247,12 @@ export default function EditAddress() {
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="zip"
               name="zip"
               type="text"
               autoComplete="postal-code"
-              placeholder="Zip / Postal Code"
+              placeholder="Code Code"
               required
               aria-label="Zip"
               defaultValue={address?.zip ?? ''}
@@ -260,12 +260,12 @@ export default function EditAddress() {
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="country"
               name="country"
               type="text"
               autoComplete="country-name"
-              placeholder="Country"
+              placeholder="Pays"
               required
               aria-label="Country"
               defaultValue={address?.country ?? ''}
@@ -273,12 +273,12 @@ export default function EditAddress() {
           </div>
           <div className="mt-3">
             <input
-              className={getInputStyleClasses()}
+              className={`${getInputStyleClasses()} rounded-none`}
               id="phone"
               name="phone"
               type="tel"
               autoComplete="tel"
-              placeholder="Phone"
+              placeholder="Téléphone"
               aria-label="Phone"
               defaultValue={address?.phone ?? ''}
             />
@@ -295,23 +295,23 @@ export default function EditAddress() {
               className="inline-block ml-2 text-sm cursor-pointer"
               htmlFor="defaultAddress"
             >
-              Set as default address
+              Définir comme adresse par défaut
             </label>
           </div>
           <div className="mt-8">
             <Button
-              className="w-full rounded focus:shadow-outline"
+              className="w-full  focus:shadow-outline"
               type="submit"
               variant="primary"
               disabled={state !== 'idle'}
             >
-              {state !== 'idle' ? 'Saving' : 'Save'}
+              {state !== 'idle' ? 'En cours' : 'Enregistrer'}
             </Button>
           </div>
           <div>
             <Button
               to=".."
-              className="w-full mt-2 rounded focus:shadow-outline"
+              className="w-full mt-2  focus:shadow-outline"
               variant="secondary"
             >
               Cancel

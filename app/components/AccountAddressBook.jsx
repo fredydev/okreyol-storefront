@@ -5,7 +5,7 @@ import {Button, Link, Text} from '~/components';
 export function AccountAddressBook({customer, addresses}) {
   return (
     <>
-      <div className="grid w-full gap-4 p-4 py-6 md:gap-8 md:p-8 lg:p-12">
+      <div className="grid w-full gap-4  pb-6 md:gap-8 md:pb-8 lg:pb-12">
         <h3 className="font-bold text-lead">Address Book</h3>
         <div>
           {!addresses?.length && (

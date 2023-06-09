@@ -42,6 +42,9 @@ export const PRODUCT_CARD_FRAGMENT = `#graphql
     title
     publishedAt
     handle
+    shortname: metafield(namespace:"descriptors",key:"subtitle") {
+      value
+    }
     variants(first: 1) {
       nodes {
         id

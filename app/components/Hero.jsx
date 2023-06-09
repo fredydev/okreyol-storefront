@@ -16,9 +16,13 @@ export function Hero({
   spreadSecondary,
   top,
 }) {
-  const navClass = 'h-nav';
+  
+  // const annoucement = document.querySelector('.donfred-annoucement')
+  // const navbar = document.querySelector('.donfred-nav');
+  // const navbarHeight = navbar.offsetHeight;
+  // const annoucementHeight = annoucement.offsetHeight;
   const heroStyle = {
-    height: `calc(100vh - 6rem`,
+    height: `calc(100vh - 10.5rem)`,
   };
   return (
     <Link to={`/collections/${handle}`}>
@@ -33,7 +37,7 @@ export function Hero({
         )}
         style={heroStyle}
       >
-        <div className="absolute    inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-10 content-stretch overflow-clip">
+        <div className="absolute    inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-1 content-stretch overflow-clip">
           {spread?.reference && (
             <div >
               <SpreadMedia
@@ -53,23 +57,24 @@ export function Hero({
                 sizes="50vw"
                 data={spreadSecondary.reference}
                 loading={loading}
+                c
               />
             </div>
           )}
         </div>
-        <div className="  bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/60 text-contrast ">
+        <div className="z-10  bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/100 text-contrast ">
           <div className='donfred  container mx-auto px-6 md:px-8 lg:px-12  flex flex-col items-baseline justify-between gap-4  py-8  '>
             {heading?.value && (
-              <Heading format as="h2" size="display" className="max-w-md">
+              <Heading format as="h2" size="heading" className="max-w-md">
                 {heading.value}
               </Heading>
             )}
             {byline?.value && (
-              <Text format width="narrow" as="p" size="lead">
+              <Text format width="narrow" as="p" size="copy">
                 {byline.value}
               </Text>
             )}
-          { cta?.value && <Text size="lead">{cta.value}</Text>}
+            { cta?.value && <button className='px-4 py-2 border border-white'><Text size="copy">{cta.value}</Text></button>}
           </div>
         </div>
       </section>
@@ -81,7 +86,7 @@ function SpreadMedia({data, loading, sizes}) {
   return (
     <MediaFile
       data={data}
-      className="block object-cover w-full h-full"
+      className="block object-cover w-full h-full "
       mediaOptions={{
         video: {
           controls: false,

@@ -34,6 +34,13 @@ export function getExcerpt(text) {
   return match?.length ? match[0] : text;
 }
 
+export function truncateText(text, separator) {
+  // Divise le texte en un tableau de mots
+  const words = text.split(separator);
+
+  return words[0];
+}
+
 export function isNewArrival(date, daysOld = 30) {
   return (
     new Date(date).valueOf() >

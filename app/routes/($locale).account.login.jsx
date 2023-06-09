@@ -3,7 +3,7 @@ import {Form, useActionData, useLoaderData} from '@remix-run/react';
 import {useState} from 'react';
 
 import {getInputStyleClasses} from '~/lib/utils';
-import {Link} from '~/components';
+import {Button, Heading, Link} from '~/components';
 
 export const handle = {
   isPublic: true,
@@ -17,13 +17,16 @@ export async function loader({context, params}) {
   }
 
   // TODO: Query for this?
-  return json({shopName: 'Hydrogen'});
+  const {shop} = await context.storefront.query(SHOP_INFO_QUERY);
+
+  return json({shopName: shop.name});
 }
 
 const badRequest = (data) => json(data, {status: 400});
 
 export const action = async ({request, context, params}) => {
   const formData = await request.formData();
+  console.log(formData)
 
   const email = formData.get('email');
   const password = formData.get('password');
@@ -79,14 +82,14 @@ export default function Login() {
   const [nativePasswordError, setNativePasswordError] = useState(null);
 
   return (
-    <div className="flex justify-center my-24 px-4">
-      <div className="max-w-md w-full">
-        <h1 className="text-4xl">Sign in.</h1>
+    <div className="flex justify-center my-24 px-4 relative">
+      <div className="max-w-md w-full border shadow-sm shadow-gray-300 bg-white px-4 py-8">
+        <Heading size='dnfrd'>Connexion à votre compte</Heading>
         {/* TODO: Add onSubmit to validate _before_ submission with native? */}
         <Form
           method="post"
           noValidate
-          className="pt-6 pb-8 mt-4 mb-4 space-y-3"
+          className="pt-6 pb-8 mt-4 mb-4 space-y-3 "
         >
           {actionData?.formError && (
             <div className="flex items-center justify-center mb-6 bg-zinc-500">
@@ -95,7 +98,7 @@ export default function Login() {
           )}
           <div>
             <input
-              className={`mb-1 ${getInputStyleClasses(nativeEmailError)}`}
+              className={`mb-1 ${getInputStyleClasses(nativeEmailError)} rounded-none py-3 focus:outline-none focus:border-corange`}
               id="email"
               name="email"
               type="email"
@@ -121,7 +124,7 @@ export default function Login() {
 
           <div>
             <input
-              className={`mb-1 ${getInputStyleClasses(nativePasswordError)}`}
+              className={`mb-1 ${getInputStyleClasses(nativePasswordError)} rounded-none pt-3 focus:outline-none focus:border-corange`}
               id="password"
               name="password"
               type="password"
@@ -153,29 +156,36 @@ export default function Login() {
                 {nativePasswordError} &nbsp;
               </p>
             )}
+            <Link
+              className=" inline-block align-baseline text-xs text-primary/50"
+              to="/account/recover"
+            >
+              Mot de passe oublié
+            </Link>
           </div>
           <div className="flex items-center justify-between">
-            <button
-              className="bg-primary text-contrast rounded py-2 px-4 focus:shadow-outline block w-full"
+            
+            <Button
+              className="text-sm mb-2 mt-6"
+              variant="primary"
+              width="full"
               type="submit"
               disabled={!!(nativePasswordError || nativeEmailError)}
             >
-              Sign in
-            </button>
+              Se connecter
+            </Button>
           </div>
-          <div className="flex justify-between items-center mt-8 border-t border-gray-300">
-            <p className="align-baseline text-sm mt-6">
-              New to {shopName}? &nbsp;
+          <div className="text-center mt-8 border-t text-xs  border-gray-300">
+            <p className="align-baseline mt-6">
+              Nouveau chez {shopName} ? &nbsp;
               <Link className="inline underline" to="/account/register">
-                Create an account
+                Créer un compte
               </Link>
             </p>
-            <Link
-              className="mt-6 inline-block align-baseline text-sm text-primary/50"
-              to="/account/recover"
-            >
-              Forgot password
-            </Link>
+            <p className='mt-6'>
+            Si vous n'avez pas créé de compte lors de votre commande, il vous suffit de créer un compte avec la même adresse mail que celle utilisée lors de votre commande. Votre abonnement apparaîtra alors sur votre compte.
+            </p>
+            
           </div>
         </Form>
       </div>
@@ -220,3 +230,14 @@ export async function doLogin({storefront}, {email, password}) {
     data?.customerAccessTokenCreate?.customerUserErrors.join(', '),
   );
 }
+
+const SHOP_INFO_QUERY = `#graphql
+  query {
+    shop {
+      name
+    }
+  }
+`;
+
+
+

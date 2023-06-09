@@ -2,7 +2,7 @@ import {json} from '@shopify/remix-oxygen';
 import {useLoaderData} from '@remix-run/react';
 import {flattenConnection, AnalyticsPageType} from '@shopify/hydrogen';
 import invariant from 'tiny-invariant';
-
+import Select from "react-select";
 import {PageHeader, Section, Text, SortFilter} from '~/components';
 import {ProductGrid} from '~/components/ProductGrid';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
@@ -147,6 +147,18 @@ export default function Collection() {
     </>
   );
 }
+
+
+const options = [
+  { value: "all", label: "All" },
+  { value: "red", label: "Red" },
+  { value: "blue", label: "Blue" },
+  { value: "green", label: "Green" },
+];
+
+
+
+
 
 const COLLECTION_QUERY = `#graphql
   query CollectionDetails(

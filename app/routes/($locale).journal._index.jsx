@@ -22,9 +22,10 @@ export const loader = async ({request, context: {storefront}}) => {
   });
 
   if (!blog?.articles) {
+    console.log("blog")
     throw new Response('Not found', {status: 404});
   }
-
+  
   const articles = flattenConnection(blog.articles).map((article) => {
     const {publishedAt} = article;
     return {
@@ -51,7 +52,7 @@ export const loader = async ({request, context: {storefront}}) => {
 
 export default function Journals() {
   const {articles} = useLoaderData();
-
+  console.log(articles)
   return (
     <>
       <PageHeader heading={BLOG_HANDLE} />

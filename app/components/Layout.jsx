@@ -2,7 +2,7 @@ import {useParams, Form, Await, useMatches} from '@remix-run/react';
 import {useWindowScroll} from 'react-use';
 import {Disclosure} from '@headlessui/react';
 import {Suspense, useEffect, useMemo, useState} from 'react';
-import {FaFacebook, FaInstagram, FaTiktok , FaArrowRight} from 'react-icons/fa'
+import {FaFacebook, FaInstagram, FaTiktok , FaRegCheckCircle, FaTelegramPlane} from 'react-icons/fa'
 
 import {
   Drawer,
@@ -27,7 +27,7 @@ import {useIsHydrated} from '~/hooks/useIsHydrated';
 import {useCartFetchers} from '~/hooks/useCartFetchers';
 import Annoucement from './Announcement';
 
-export function Layout({children, layout}) {
+export function Layout({children, layout,newsubscriber}) {
   return (
     <>
       <div className="flex flex-col min-h-screen">
@@ -42,11 +42,11 @@ export function Layout({children, layout}) {
           title={layout?.shop.name ?? 'Hydrogen'}
           menu={layout?.headerMenu}
         />
-        <main role="main" id="mainContent" className="flex-grow">
+        <main role="main" id="mainContent" className="flex-grow bg">
           {children}
         </main>
       </div>
-      <Footer menu={layout?.footerMenu} logo={layout?.shop.brand?.logo.image.url} />
+      <Footer menu={layout?.footerMenu} logo={layout?.shop.brand?.logo.image.url} newsubscriber={newsubscriber}/>
     </>
   );
 }
@@ -155,12 +155,9 @@ function MobileHeader({isHome, openCart, openMenu,logo}) {
 
   return (
     <header
-      role="banner"
-      className={`${
-        isHome
-          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
-          : 'bg-contrast/80 text-primary'
-      } flex lg:hidden items-center h-16 sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`}
+      role="banner" 
+      className={`bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader 
+       flex lg:hidden items-center donfred-nav h-16 sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`}
     >
       <div className="flex items-center justify-start w-full gap-4  ">
         <button
@@ -217,22 +214,51 @@ function DesktopHeader({isHome, menu, openCart, logo}) {
   return (
     <header
       role="banner"
-      className={`${
-        isHome
-          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
-          : 'bg-contrast/80 text-primary'
-      } ${
-        !isHome && y > 50 && ' shadow-lightHeader'
-      } hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`}
+      className={`
+           text-contrast dark:text-primary shadow-darkHeadern 
+      bg-creme font-poppins
+      hidden h-auto donfred-nav lg:flex items-center justify-between  sticky transition duration-300  z-40 top-0  w-full leading-none gap-8  `}
     >
-      <div className="donfred flex flex-wrap justify-between items-center container mx-auto px-6 md:px-8 lg:px-12 ">
-        <div className="flex gap-12">
+      <div className="donfred flex flex-col  justify-between    w-full  ">
+        <div className="flex gap-12 justify-between container mx-auto px-6 md:px-8 lg:px-12">
           <Link className="font-bold" to="/" prefetch="intent">
             <div className=''>
-              <img src={logo} alt="Logo" className='h-24 w-auto'/>
+              <img src={logo} alt="Logo" className='h-28 w-auto'/>
             </div>
           </Link>
-          <nav className="flex gap-8 font-poppins items-center">
+          <div className="flex items-center  gap-2 text-black">
+            <Form
+              method="get"
+              action={params.locale ? `/${params.locale}/search` : '/search'}
+              className="flex items-center gap-2"
+            >
+              <Input
+                className={
+                  isHome
+                    ? 'focus:border-contrast/20 dark:focus:border-primary/20'
+                    : 'focus:border-primary/20'
+                }
+                type="search"
+                variant="minisearch"
+                placeholder="Search"
+                name="q"
+              />
+              <button
+                type="submit"
+                className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
+              >
+                <IconSearch />
+              </button>
+            </Form>
+            <AccountLink className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5" />
+            <CartCount isHome={isHome} openCart={openCart} />
+          </div>
+          
+        </div>
+        <nav className={`${
+        !isHome && y > 50 && ' shadow-lightHeader'
+      } bg-primary/80 dark:bg-contrast/60    `}>
+          <div className='container flex  font-poppins items-end mx-auto px-6 md:px-8 lg:px-12 font-normal'>
             {/* Top level menu items */}
             {(menu?.items || []).map((item) => (
               <Link
@@ -241,41 +267,14 @@ function DesktopHeader({isHome, menu, openCart, logo}) {
                 target={item.target}
                 prefetch="intent"
                 className={({isActive}) =>
-                  isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
+                  isActive ? '  bg-corange py-3 px-2 transition-transform duration-300' : 'text-white hover:bg-corange transition-colors duration-700 px-2 py-3'
                 }
               >
                 {item.title}
               </Link>
             ))}
+            </div>
           </nav>
-        </div>
-        <div className="flex items-center gap-1">
-          <Form
-            method="get"
-            action={params.locale ? `/${params.locale}/search` : '/search'}
-            className="flex items-center gap-2"
-          >
-            <Input
-              className={
-                isHome
-                  ? 'focus:border-contrast/20 dark:focus:border-primary/20'
-                  : 'focus:border-primary/20'
-              }
-              type="search"
-              variant="minisearch"
-              placeholder="Search"
-              name="q"
-            />
-            <button
-              type="submit"
-              className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
-            >
-              <IconSearch />
-            </button>
-          </Form>
-          <AccountLink className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5" />
-          <CartCount isHome={isHome} openCart={openCart} />
-        </div>
       </div>
     </header>
   );
@@ -303,7 +302,7 @@ function CartCount({isHome, openCart}) {
       <Await resolve={root.data?.cart}>
         {(cart) => (
           <Badge
-            dark={isHome}
+            dark={true}
             openCart={openCart}
             count={cart?.totalQuantity || 0}
           />
@@ -351,36 +350,9 @@ function Badge({openCart, dark, count}) {
   );
 }
 
-// function Footer({menu}) {
-//   const isHome = useIsHomePath();
-//   const itemsCount = menu
-//     ? menu?.items?.length + 1 > 4
-//       ? 4
-//       : menu?.items?.length + 1
-//     : [];
-
-//   return (
-//     <Section
-//       divider={isHome ? 'none' : 'top'}
-//       as="footer"
-//       role="contentinfo"
-//       className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
-//         bg-primary dark:bg-contrast dark:text-primary text-contrast overflow-hidden`}
-//     >
-//       <FooterMenu menu={menu} />
-//       <CountrySelector />
-//       <div
-//         className={`self-end pt-8 opacity-50 md:col-span-2 lg:col-span-${itemsCount}`}
-//       >
-//         &copy; {new Date().getFullYear()} / Shopify, Inc. Hydrogen is an MIT
-//         Licensed Open Source project.
-//       </div>
-//     </Section>
-//   );
-// }
 
 
-const Footer = ({logo}) => {
+const Footer = ({logo,newsubscriber, menu}) => {
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(false);
 
@@ -388,91 +360,96 @@ const Footer = ({logo}) => {
     const inputEmail = event.target.value;
     setEmail(inputEmail);
     setIsValidEmail(validateEmail(inputEmail));
-  };
+  };  
 
   const validateEmail = (email) => {
     // Logique de validation de l'email
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
-  
-  return (
+  // console.log(menu)  
+  const blog = menu.items.find(item=>item.title === 'Blog')
+  return (             
     <footer className="bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader ">
       <div className="container mx-auto px-6 md:px-8 lg:px-12 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-4">Nous contacter</h3>
+          <div className='text-sm'>
+            <h3 className="text-xl font-bold mb-4 txt">Nous contacter</h3>
             <p className="mb-2 font-bold italic">Dites bonjour !</p>
-            <p className="mb-2">example@example.com</p>
-            <p>123-456-7890</p>
-            <img src={logo} alt="Logo" className="w-32 mt-4" />
+            <p className="mb-2">info@boiscreatif.fr</p>
+            {/* <p>123-456-7890</p> */}
+            <Link to="/">
+              <img src={logo} alt="Logo" className="w-32 mt-4" />
+            </Link>
+            
           </div>
-          <div>
+          <div className='text-sm'>
             <h3 className="text-xl font-bold mb-4">Bois Créatif</h3>
             <ul>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link to="/search" className="text-gray-300 hover:text-white">
                   Rechercher
-                </a>
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
-                  Cuisine
-                </a>
+                <Link to="/collections/lumieres-et-bois" className="text-gray-300 hover:text-white">
+                  Lumières et bois
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
-                  Lumière
-                </a>
+                <Link to="/pages/papiers-peints" className="text-gray-300 hover:text-white">
+                  Papiers peints
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
-                  Nouveautés
-                </a>
+                <Link to="/products" className="text-gray-300 hover:text-white">
+                  Créations
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white">
-                  En vente maintenant
-                </a>
+                <Link to={blog.url} className="text-gray-300 hover:text-white">
+                  Blog
+                </Link>
               </li>
             </ul>
           </div>
-          <div>
+          <div className='text-sm'>
             <h3 className="text-xl font-bold mb-4">Liens rapides</h3>
             <ul>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link to="/pages/about" className="text-gray-300 hover:text-white">
                   À propos de nous
-                </a>
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link to="/policies/refund-policy" className="text-gray-300 hover:text-white">
                   Politique de retour
-                </a>
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link to="/policies/privacy-policy" className="text-gray-300 hover:text-white">
                   Politique de confidentialité
-                </a>
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link to="/pages/faq" className="text-gray-300 hover:text-white">
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white">
+                <Link to="/pages/contact" className="text-gray-300 hover:text-white">
                   Contactez-nous
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
-          <div className='sm:px-4'>
-            <h3 className="text-xl font-bold mb-4">Rejoignez-nous</h3>
+          <div className='sm:px-4 text-sm' id="contact-footer">
+            <h3 className="text-xl font-bold mb-4">Restons en contact</h3>
             <p className="mb-2">Soyez au courant des nouvelles offres et des news</p>
+            
             <Form
               method="post"
               noValidate
-              className="flex mb-4"
+              className="flex mb-2"
             >
                 <input
                   id="email"
@@ -482,7 +459,7 @@ const Footer = ({logo}) => {
                   required
                   placeholder="Email address"
                   aria-label="Email address"
-                  className={`border border-gray-300 rounded-l py-2 px-4 w-full text-black ${
+                  className={`border border-gray-300 rounded-l-sm py-2 px-4 w-full text-black ${
                     isValidEmail ? "pr-12" : ""
                   }`}
                   value={email}
@@ -491,21 +468,24 @@ const Footer = ({logo}) => {
               
               <button
                 className={`${
-                  isValidEmail ? "bg-blue-500 hover:bg-blue-700" : "bg-gray-300"
-                } text-white rounded-r px-4 transition-colors duration-300`}
+                  isValidEmail ? "bg-corange" : "bg-gray-300"
+                } text-white rounded-r-sm px-4 transition-colors duration-300`}
                 disabled={!isValidEmail}
               >
-                <FaArrowRight />
+                <FaTelegramPlane />
               </button>
             </Form>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white">
+            {newsubscriber && (
+              <p className='flex items-center mb-2'><span><FaRegCheckCircle className='text text-sm  text-green-600 mr-2'/></span><span>Merci de votre inscription &nbsp;</span></p>
+            )}
+            <div className="flex space-x-4 text-lg mt-2">
+              <a href="https://facebook.com/boicreatif" className="text-gray-300 hover:text-corange">
                 <FaFacebook />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white">
+              <a href="https://instagram.com/boicreatif" className="text-gray-300 hover:text-corange">
                 <FaInstagram/>
               </a>
-              <a href="#" className="text-gray-300 hover:text-white">
+              <a href="https://tiktok.com/@boicreatif" className="text-gray-300 hover:text-corange">
                 <FaTiktok />
                 
               </a>
@@ -517,68 +497,4 @@ const Footer = ({logo}) => {
   );
 };
 
-const FooterLink = ({item}) => {
-  if (item.to.startsWith('http')) {
-    return (
-      <a href={item.to} target={item.target} rel="noopener noreferrer">
-        {item.title}
-      </a>
-    );
-  }
-
-  return (
-    <Link to={item.to} target={item.target} prefetch="intent">
-      {item.title}
-    </Link>
-  );
-};
-
-function FooterMenu({menu}) {
-  const styles = {
-    section: 'grid gap-4',
-    nav: 'grid gap-2 pb-6',
-  };
-
-  return (
-    <>
-      {(menu?.items || []).map((item) => (
-        <section key={item.id} className={styles.section}>
-          <Disclosure>
-            {({open}) => (
-              <>
-                <Disclosure.Button className="text-left md:cursor-default">
-                  <Heading className="flex justify-between" size="lead" as="h3">
-                    {item.title}
-                    {item?.items?.length > 0 && (
-                      <span className="md:hidden">
-                        <IconCaret direction={open ? 'up' : 'down'} />
-                      </span>
-                    )}
-                  </Heading>
-                </Disclosure.Button>
-                {item?.items?.length > 0 ? (
-                  <div
-                    className={`${
-                      open ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
-                    } overflow-hidden transition-all duration-300`}
-                  >
-                    <Suspense data-comment="This suspense fixes a hydration bug in Disclosure.Panel with static prop">
-                      <Disclosure.Panel static>
-                        <nav className={styles.nav}>
-                          {item.items.map((subItem) => (
-                            <FooterLink key={subItem.id} item={subItem} />
-                          ))}
-                        </nav>
-                      </Disclosure.Panel>
-                    </Suspense>
-                  </div>
-                ) : null}
-              </>
-            )}
-          </Disclosure>
-        </section>
-      ))}
-    </>
-  );
-}
 
