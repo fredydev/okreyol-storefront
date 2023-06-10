@@ -28,7 +28,7 @@ export async function loader({params, context}) {
     variables: {handle: 'ludique', handle2: 'lumieres-et-bois'},
   });
 
-  const seo = seoPayload.home();
+  const seo = seoPayload.home(shop);
 
   return defer(
     {

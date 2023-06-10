@@ -409,7 +409,7 @@ const Footer = ({logo,newsubscriber, menu}) => {
                 </Link>
               </li>
               <li>
-                <Link to={blog.url} className="text-gray-300 hover:text-white">
+                <Link to={"/journal"} className="text-gray-300 hover:text-white">
                   Blog
                 </Link>
               </li>
