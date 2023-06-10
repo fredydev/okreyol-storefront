@@ -82,8 +82,9 @@ export default function Login() {
   const [nativePasswordError, setNativePasswordError] = useState(null);
 
   return (
-    <div className="flex justify-center my-24 px-4 relative">
-      <div className="max-w-md w-full border shadow-sm shadow-gray-300 bg-white px-4 py-8">
+    <div className=" lg:bg-fixed  lg:bg-right lg:bg-no-repeat lg:bg-[url('/images/brown-parallax2.svg')] ">
+      <div className='flex justify-center py-24 px-4 bg-white/80'>
+      <div className="max-w-md w-full  shadow-sm shadow-gray-300 px-4 py-8">
         <Heading size='dnfrd'>Connexion à votre compte</Heading>
         {/* TODO: Add onSubmit to validate _before_ submission with native? */}
         <Form
@@ -188,6 +189,7 @@ export default function Login() {
             
           </div>
         </Form>
+      </div>
       </div>
     </div>
   );

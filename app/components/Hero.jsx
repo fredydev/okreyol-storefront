@@ -28,14 +28,14 @@ export function Hero({
     <Link to={`/collections/${handle}`}>
       <section
         className={clsx(
-          'relative justify-end flex flex-col w-full donfred',
+          'relative justify-end flex flex-col w-full donfred h-[calc(100vh-7.0rem)] lg:h-[calc(100vh-10.5rem)]',
           
           // top && '-mt-nav',
           // height === 'full' 
-          //   ? 'h-screen'
+          //   ? 'h-screen' 
           //   : 'aspect-[4/5] sm:aspect-square md:aspect-[5/4] lg:aspect-[3/2] xl:aspect-[2/1]',
         )}
-        style={heroStyle}
+        // style={heroStyle}
       >
         <div className="absolute    inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-1 content-stretch overflow-clip">
           {spread?.reference && (

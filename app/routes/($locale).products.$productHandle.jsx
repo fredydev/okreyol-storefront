@@ -241,7 +241,7 @@ export default function Product() {
           </Tab.Group>
                 {/* {documentToReactComponents(JSON.parse(features.value))} */}
           {/* Product info */}
-          <div className="mt-10 sm:mt-16 lg:mt-0 border border-dashed">
+          <div className="mt-10 sm:mt-16 lg:mt-0 border px-2 border-dashed">
           {vendor && (
                   <Text className={'opacity-50 font-medium text-sm'}>{vendor}</Text>
                 )}
