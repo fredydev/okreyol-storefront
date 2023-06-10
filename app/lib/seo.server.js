@@ -1,7 +1,7 @@
 function root({shop, url}) {
   return {
     title: shop?.name,
-    titleTemplate: '%s | Hydrogen Demo Store',
+    titleTemplate: '%s | boiscreatif.fr',
     description: truncate(shop?.description ?? ''),
     handle: '@shopify',
     url,
@@ -15,11 +15,11 @@ function root({shop, url}) {
       name: shop.name,
       logo: shop.brand?.logo?.image?.url,
       sameAs: [
-        'https://twitter.com/shopify',
-        'https://facebook.com/shopify',
-        'https://instagram.com/shopify',
-        'https://youtube.com/shopify',
-        'https://tiktok.com/@shopify',
+        'https://twitter.com/boiscreatif',
+        'https://facebook.com/boiscreatif',
+        'https://instagram.com/boiscreatif',
+        'https://youtube.com/boiscreatif',
+        'https://tiktok.com/@boiscreatif',
       ],
       url,
       potentialAction: {
@@ -31,11 +31,11 @@ function root({shop, url}) {
   };
 }
 
-function home() {
+function home({shop}) {
   return {
-    title: 'Home',
-    titleTemplate: '%s | Hydrogen Demo Store',
-    description: 'The best place to buy snowboarding products',
+    title: shop?.name,
+    titleTemplate: '%s | Une touche de bois pour votre intérieur',
+    description: truncate(shop?.description ?? ''),
     robots: {
       noIndex: false,
       noFollow: false,
@@ -47,22 +47,7 @@ function home() {
     },
   };
 }
-function thanks() {
-  return {
-    title: 'Thanks',
-    titleTemplate: '%s | Hydrogen Demo Store',
-    description: 'Thanks for subscribing to',
-    robots: {
-      noIndex: false,
-      noFollow: false,
-    },
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'WebPage',
-      name: 'Thanks page',
-    },
-  };
-}
+
 function productJsonLd({product, selectedVariant, url}) {
   const origin = new URL(url).origin;
   const variants = product.variants.nodes;
@@ -222,8 +207,8 @@ function collectionsJsonLd({url, collections}) {
 function listCollections({collections, url}) {
   return {
     title: 'Collections',
-    titleTemplate: '%s | Collections',
-    description: 'All hydrogen collections',
+    titleTemplate: 'Bois Créatif | Collections',
+    description: 'Toutes les collections Bois Créatif',
     url,
     jsonLd: collectionsJsonLd({collections, url}),
   };
@@ -278,7 +263,7 @@ function page({page, url}) {
   return {
     description: truncate(page?.seo?.description || ''),
     title: page?.seo?.title,
-    titleTemplate: '%s | Page',
+    titleTemplate: `%s | ${page.title}`,
     url,
     jsonLd: {
       '@context': 'https://schema.org',
@@ -339,7 +324,6 @@ export const seoPayload = {
   policy,
   product,
   root,
-  thanks
 };
 
 /**
