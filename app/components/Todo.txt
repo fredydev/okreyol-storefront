@@ -1,0 +1,11 @@
+- pied de page 
+- border dashed product page --> done
+- empty input after sending message
+- homepage hero h-screen --> done
+- papiers peints page
+- opacity navbar desktop --> done
+- checkbox width on mobile
+- use poppins as font-family
+- FAQ : vraies question et vrais réponses
+- passer commande pour tester
+- renvoyer vers la section avis quand on clique sur les star d'une page produit

@@ -42,7 +42,7 @@ export function Layout({children, layout,newsubscriber}) {
           title={layout?.shop.name ?? 'Hydrogen'}
           menu={layout?.headerMenu}
         />
-        <main role="main" id="mainContent" className="flex-grow bg">
+        <main role="main" id="mainContent" className="flex-grow ">
           {children}
         </main>
       </div>
@@ -216,11 +216,12 @@ function DesktopHeader({isHome, menu, openCart, logo}) {
       role="banner"
       className={`
            text-contrast dark:text-primary shadow-darkHeadern 
-      bg-creme font-poppins
+      bg-creme/80 font-poppins
       hidden h-auto donfred-nav lg:flex items-center justify-between  sticky transition duration-300  z-40 top-0  w-full leading-none gap-8  `}
     >
-      <div className="donfred flex flex-col  justify-between    w-full  ">
-        <div className="flex gap-12 justify-between container mx-auto px-6 md:px-8 lg:px-12">
+      <div className="donfred flex flex-col  justify-between      w-full  ">
+        <div className=' bg-creme  div-sa-se-jus-poum-jere-nav-opacity-a  gap-12 justify-between  px-6 md:px-8 lg:px-12'>
+        <div className="flex gap-12 justify-between container bg-creme   mx-auto px-6 md:px-8 lg:px-12">
           <Link className="font-bold" to="/" prefetch="intent">
             <div className=''>
               <img src={logo} alt="Logo" className='h-28 w-auto'/>
@@ -255,7 +256,9 @@ function DesktopHeader({isHome, menu, openCart, logo}) {
           </div>
           
         </div>
-        <nav className={`${
+        
+          </div>
+          <nav className={`${
         !isHome && y > 50 && ' shadow-lightHeader'
       } bg-primary/80 dark:bg-contrast/60    `}>
           <div className='container flex  font-poppins items-end mx-auto px-6 md:px-8 lg:px-12 font-normal'>
@@ -492,6 +495,11 @@ const Footer = ({logo,newsubscriber, menu}) => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="container mx-auto px-4 py-4">
+        <p className="text-center text-white">
+          &copy; {new Date().getFullYear()} Bois Créatif. Tous droits réservés.
+        </p>
       </div>
     </footer>
   );

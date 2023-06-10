@@ -36,7 +36,7 @@ const wallpaperData = [
 import {Button, Heading, Link, PageHeader, Section} from '~/components';
 import {CACHE_LONG, routeHeaders} from '~/data/cache';
 import {seoPayload} from '~/lib/seo.server';
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import {
   Form
@@ -146,17 +146,19 @@ export default function Page() {
     </>
   }
   return (
-    <>
-      <PageHeader heading={page.title}/>
-      <Section >
-          <div className=''>
-            <div 
-              dangerouslySetInnerHTML={{__html: page.body}}
-              className="prose dark:prose-invert b "
-            />
+    <div className={`lg:bg-[url('/images/brown-parallax2.svg')] lg:bg-fixed lg:bg-right lg:bg-no-repeat block`}>
+      <div className="bg-white/80 border">
+        <PageHeader heading={page.title}/>
+        <Section >
+            <div >
+              <div 
+                dangerouslySetInnerHTML={{__html: page.body}}
+                className="prose dark:prose-invert b "
+              />
+          </div>
+          </Section>
         </div>
-        </Section>
-    </>
+    </div>
   );
 }
 
@@ -251,7 +253,7 @@ return (
           }`}
           onClick={() => toggleItem(1)}
         >
-          Bois Créatif
+          L'entreprise
         </li>
         <li
           className={`px-4 py-2 cursor-pointer ${

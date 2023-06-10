@@ -87,8 +87,9 @@ export default function Register() {
   const [nativePasswordError, setNativePasswordError] = useState(null);
 
   return (
-    <div className="flex justify-center items-center flex-col my-24 px-4 ">
-      <div className="max-w-md w-full border shadow-sm shadow-gray-300 bg-white px-4 py-8">
+    <div className="lg:bg-fixed lg:h-[calc(100vh-10.5rem)] lg:bg-right lg:bg-no-repeat lg:bg-[url('/images/brown-parallax2.svg')] border-2 border-cyan-700">
+      <div className='flex justify-center py-24 px-4 bg-white/80  lg:h-full'>
+      <div className="max-w-md w-full shadow-sm shadow-gray-300 px-4 py-8">
       <Heading size='dnfrd'>Créer un compte</Heading>
         {/* TODO: Add onSubmit to validate _before_ submission with native? */}
         <Form
@@ -169,11 +170,11 @@ export default function Register() {
               type="submit"
               disabled={!!(nativePasswordError || nativeEmailError)}
             >
-              Create Account
+              Créer un compte
             </Button>
           </div>
           <div className="flex items-center mt-8 border-t border-gray-300">
-            <p className="align-baseline text-sm mt-6">
+            <p className="align-baseline text-xs mt-6">
               Vous avez déja a compte ? &nbsp;
               <Link className="inline underline" to="/account/login">
                 Connectez-vous
@@ -181,6 +182,7 @@ export default function Register() {
             </p>
           </div>
         </Form>
+      </div>
       </div>
     </div>
   );
