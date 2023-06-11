@@ -14,7 +14,7 @@ export default {
         "cboismarron":"#543817",
         "corange":"#edb178ff",
         "clightgray": '#eaeaea',
-        "creme":"#f7f3ed"
+        "creme":"#f7f3ed",
       },
       screens: {
         sm: '32em',
@@ -47,6 +47,7 @@ export default {
         assistant: ['Assistant', 'sans-serif'],
         sans: ['Helvetica Neue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         serif: ['"IBMPlexSerif"', 'Palatino', 'ui-serif'],
+        anton: ['Anton', 'sans-serif']
       },
       fontSize: {
         display: ['var(--font-size-display)', '1.1'],

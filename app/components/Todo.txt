@@ -9,3 +9,4 @@
 - FAQ : vraies question et vrais réponses
 - passer commande pour tester
 - renvoyer vers la section avis quand on clique sur les star d'une page produit
+- create customer review

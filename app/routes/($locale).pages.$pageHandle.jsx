@@ -146,7 +146,7 @@ export default function Page() {
     </>
   }
   return (
-    <div className={`lg:bg-[url('/images/brown-parallax2.svg')] lg:bg-fixed lg:bg-right lg:bg-no-repeat block`}>
+    <div className={`lg:bg-[url('../brown-parallax.svg')] lg:bg-fixed lg:bg-right lg:bg-no-repeat block`}>
       <div className="bg-white/80 border">
         <PageHeader heading={page.title}/>
         <Section >
@@ -365,11 +365,12 @@ const ContactUsPage = ({success}) => {
       
   }, [])
   return (
-    <Section>
+    <div className=" lg:bg-fixed  lg:bg-right lg:bg-no-repeat lg:bg-[url('../brown-parallax.svg')]  flex lg:h-[calc(100vh-10.5rem)]">
       {success && ( <SuccessMessage />
         
       )}
-    <div className="py-8 md:flex items-center justify-between">
+    <div className=" bg-white/80  w-full">
+    <div className="py-8 md:flex items-center justify-between container mx-auto px-6 md:px-8 lg:px-12 ">
       <div className="  flex flex-col pb-6  max-w-md font-normal">
         <Heading>Vous cherchez des réponses ?</Heading>
         <div className="my-8">
@@ -439,8 +440,8 @@ const ContactUsPage = ({success}) => {
           </Button>
         </Form>
       </div>
-    </div>
-    </Section>
+    </div></div></div>
+    
   );
 };
 

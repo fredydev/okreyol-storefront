@@ -21,6 +21,13 @@ import {
   Cart,
   CartLoading,
   Link,
+  ShopifyPay,
+  Paypal,
+  Visa,
+  AmericanExpress,
+  PIMaster,
+  PICartes,
+  ApplePay,
 } from '~/components';
 import {useIsHomePath} from '~/lib/utils';
 import {useIsHydrated} from '~/hooks/useIsHydrated';
@@ -373,7 +380,7 @@ const Footer = ({logo,newsubscriber, menu}) => {
   const blog = menu.items.find(item=>item.title === 'Blog')
   return (             
     <footer className="bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader ">
-      <div className="container mx-auto px-6 md:px-8 lg:px-12 py-8">
+      <div className="container mx-auto px-6 md:px-8 lg:px-12 py-8 border-b border-white">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           <div className='text-sm'>
             <h3 className="text-xl font-bold mb-4 txt">Nous contacter</h3>
@@ -496,8 +503,36 @@ const Footer = ({logo,newsubscriber, menu}) => {
           </div>
         </div>
       </div>
-      <div className="container mx-auto px-4 py-4">
-        <p className="text-center text-white">
+      <div className="container mx-auto px-4 py-4 ">
+        
+        <div className="">
+      <span className="hidden">Moyens de paiement</span>
+      <ul className="list flex flex-wrap justify-center gap-2 pb-2" role="list">
+        <li className="list-payment__item">
+          <ShopifyPay />
+        </li>
+        <li className="list-payment__item">
+          <Paypal />
+        </li>
+        <li className="list-payment__item">
+          <Visa />
+        </li>
+        <li className="list-payment__item">
+          <AmericanExpress />
+        </li>
+        <li className="list-payment__item">
+          <PIMaster />
+        </li>
+        <li className="list-payment__item">
+          <PICartes />
+        </li>
+        <li className="list-payment__item">
+          <ApplePay />
+        </li>
+        {/* Repeat the above list item structure for other payment icons */}
+      </ul>
+    </div>
+    <p className="text-center text-white">
           &copy; {new Date().getFullYear()} Bois Créatif. Tous droits réservés.
         </p>
       </div>
