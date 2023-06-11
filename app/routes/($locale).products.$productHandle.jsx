@@ -1,10 +1,8 @@
 import {useRef, Suspense, useMemo, useState} from 'react';
-import {Disclosure, Listbox, RadioGroup, Tab} from '@headlessui/react';
+import { Listbox, Tab} from '@headlessui/react';
 import BreadCrumb from "../components/BreadCrumb"
 import CustomerReviews from "../components/CustomerReviews"
-import { StarIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/20/solid'
-import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { StarIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import {defer} from '@shopify/remix-oxygen';
 import {getAllReviewsForProduct} from '../api/reviews'
 import {FiClock, FiTruck} from "react-icons/fi"
@@ -25,10 +23,7 @@ import {
   Heading,
   IconCaret,
   IconCheck,
-  IconClose,
-  ProductGallery,
   ProductSwimlane,
-  Section,
   Skeleton,
   Text,
   Link,
@@ -39,7 +34,6 @@ import { truncateText} from '~/lib/utils';
 import {seoPayload} from '~/lib/seo.server';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {routeHeaders, CACHE_SHORT} from '~/data/cache';
-import { type } from 'os';
 
 export const headers = routeHeaders;
 
@@ -613,79 +607,6 @@ function Accordion({learnMore,title, content}) {
     </animated.div>
   );
 }
-function ProductDetail({title, content, learnMore}) {
-  const [open, setOpen] = useState(false);
-  //toggle accordion function
-  let toggleHandler = (e) => {
-    //switch state
-    setOpen(!open);
-  };
-  const openAnimation = useSpring({
-    from: { opacity: "0", maxHeight: "25px" },
-    to: { opacity: "1", maxHeight: open ? "200px" : "25px" },
-    config: { duration: "300" }
-  });
-  
-  //rotate animation
-  const iconAnimation = useSpring({
-    from: {
-      transform: "rotate(0deg)",
-      color: "#ffff"
-    },
-    to: {
-      transform: open ? "rotate(180deg)" : "rotate(0deg)",
-      color: open ? "#10d6f5" : "#fff"
-    },
-    config: { duration: "120" }
-  });
-  return (  
-    <animated.div className="w-full max-h-full py-[17px] px-[10px] border-b border-gray-200 text-white overflow-hidden cursor-pointer" style={openAnimation}>
-      <div className="flex justify-between items-center" onClick={toggleHandler}>
-        <h4 className='text-black' >{title}</h4>
-        <animated.i style={iconAnimation}>
-        <ChevronRightIcon className={` h-5 w-5`} />
-        </animated.i>
-      </div>
-      <div className="prose dark:prose-invert text-sm" dangerouslySetInnerHTML={{__html: content}}/>
-    </animated.div>
-    // <Disclosure >
-    //     {({ open }) => (
-    //       <>
-    //         <Disclosure.Button className="flex items-center  justify-between w-full border-b border-gray-200  text-gray-700 transition-colors duration-300  px-4 rounded-md py-4">
-    //           <span> {title}</span>
-    //           <ChevronRightIcon className={`${open?"rotate-90 transform":""} h-5 w-5`} />
-    //         </Disclosure.Button>
-    //         <Disclosure.Panel
-    //           className={`${
-    //             open ? 'transition-max-height duration-700 ease-out' : 'hidden'
-    //           } bg-gray-100 p-4 overflow-hidden`}
-    //         >
-    //           {typeof content === 'string' ? <div
-    //             className="prose dark:prose-invert text-sm"
-    //             dangerouslySetInnerHTML={{__html: content}}
-    //           /> :<ul className=' p-2 list-disc '>
-    //           {content.map((item) => (
-    //             <li className='l   ' key={item.children[0].value}>{item.children[0].value}</li>
-    //           ))}
-    //         </ul>}
-    //           {learnMore && (
-    //           <div className="">
-    //             <Link
-    //               className="pb-px border-b border-primary/30 text-primary/50 font-normal italic hover:text-corange"
-    //               to={learnMore}
-    //             >
-    //               Learn more
-    //             </Link>
-    //           </div> )}
-    //         </Disclosure.Panel>
-    //       </>
-    //     )}
-    //   </Disclosure>
-
-      
-    
-  );
-}
 
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
   fragment ProductVariantFragment on ProductVariant {
@@ -839,18 +760,3 @@ async function getRecommendedProducts(storefront, productId) {
 
   return mergedProducts;
 }
-
-const CUSTOMER_CREATE_REVIEW = `#graphql
-  mutation productUpdate($input: ProductInput!) {
-    productUpdate(input: $input) {
-      product {
-        
-      }
-      userErrors {
-        
-        field
-        message
-      }
-    }
-  }
-`;

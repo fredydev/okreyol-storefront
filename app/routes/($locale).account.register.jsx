@@ -87,7 +87,7 @@ export default function Register() {
   const [nativePasswordError, setNativePasswordError] = useState(null);
 
   return (
-    <div className="lg:bg-fixed lg:h-[calc(100vh-10.5rem)] lg:bg-right lg:bg-no-repeat lg:bg-[url('/images/brown-parallax2.svg')] border-2 border-cyan-700">
+    <div className="lg:bg-fixed lg:h-[calc(100vh-10.5rem)] lg:bg-right lg:bg-no-repeat lg:bg-[url('../brown-parallax.svg')]">
       <div className='flex justify-center py-24 px-4 bg-white/80  lg:h-full'>
       <div className="max-w-md w-full shadow-sm shadow-gray-300 px-4 py-8">
       <Heading size='dnfrd'>Créer un compte</Heading>
