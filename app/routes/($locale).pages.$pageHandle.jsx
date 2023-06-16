@@ -137,8 +137,8 @@ export default function Page() {
         <ContactUsPage success={success}  page={page}/>
     </>
   }
-  // console.log(JSON.parse(faq))
-  if(page.title === "FAQ - Questions fréquentes"){
+  console.log(page.title)
+  if(page.title === "FAQ - Frequently Asked Questions"){
     return <>
       <Section>
         <FAQ menu={JSON.parse(faq).questions}  />
